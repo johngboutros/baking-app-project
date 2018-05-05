@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="discovery_item_height" >277dp</dimen>
+    <dimen name="discovery_item_loading_height" >70dp</dimen>
+    <dimen name="discovery_item_loading_margin" >8dp</dimen>
+    <dimen name="discovery_item_image_text_margin" >4dp</dimen>
+    <dimen name="discovery_item_image_text_margin_top" >16dp</dimen>
+    <dimen name="movie_detail_image_height" >@dimen/discovery_item_height</dimen>
+    <dimen name="movie_detail_image_width" >185dp</dimen>
+    <dimen name="movie_detail_image_margin_left" >32dp</dimen>
+    <dimen name="movie_detail_image_margin_top" >16dp</dimen>
+    <dimen name="movie_detail_aside_margin_left">32dp</dimen>
+    <dimen name="movie_detail_aside_margin_top">16dp</dimen>
+    <dimen name="movie_detail_year_text_size">28sp</dimen>
+    <dimen name="movie_detail_duration_text_size">22sp</dimen>
+    <dimen name="movie_detail_paragraph_text_size">16sp</dimen>
+    <dimen name="movie_detail_row_margin_h">16dp</dimen>
+    <dimen name="movie_detail_row_margin_top">16dp</dimen>
+    <dimen name="movie_detail_subrow_margin_v">8dp</dimen>
+    <dimen name="movie_detail_separator_margin">16dp</dimen>
+    <dimen name="movie_detail_separator_thickness">2dp</dimen>
+    <dimen name="movie_detail_sub_separator_thickness">1dp</dimen>
+    <dimen name="movie_detail_video_item_width">48dp</dimen>
+</resources>

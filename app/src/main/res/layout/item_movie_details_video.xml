@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="@dimen/movie_detail_row_margin_h"
+    android:layout_marginStart="@dimen/movie_detail_row_margin_h"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/movie_detail_video_item_play_iv"
+        android:layout_width="@dimen/movie_detail_video_item_width"
+        android:layout_height="@dimen/movie_detail_video_item_width"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_play"
+        app:layout_constraintBottom_toTopOf="@id/movie_detail_video_item_separator_v"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </ImageView>
+
+    <TextView
+        android:id="@+id/movie_detail_video_item_name_tv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/movie_detail_subrow_margin_v"
+        android:layout_marginEnd="@dimen/movie_detail_row_margin_h"
+        android:layout_marginStart="@dimen/movie_detail_row_margin_h"
+        android:layout_marginTop="@dimen/movie_detail_subrow_margin_v"
+        android:gravity="start|center_vertical"
+        android:textSize="@dimen/movie_detail_paragraph_text_size"
+        app:layout_constraintBottom_toTopOf="@+id/movie_detail_video_item_separator_v"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/movie_detail_video_item_play_iv"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Video Name" />
+
+
+    <!--Horizontal Separator-->
+    <View
+        android:id="@+id/movie_detail_video_item_separator_v"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/movie_detail_sub_separator_thickness"
+        android:background="@android:color/darker_gray"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/movie_detail_video_item_play_iv" />
+
+</android.support.constraint.ConstraintLayout>

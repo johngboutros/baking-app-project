@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="@dimen/movie_detail_row_margin_h"
+    android:layout_marginStart="@dimen/movie_detail_row_margin_h"
+    android:layout_marginTop="@dimen/movie_detail_subrow_margin_v"
+    android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/movie_detail_review_item_author_tv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/movie_detail_row_margin_h"
+        android:layout_marginStart="@dimen/movie_detail_row_margin_h"
+        android:gravity="start|center_vertical"
+        android:textSize="@dimen/movie_detail_paragraph_text_size"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Author Name" />
+
+    <TextView
+        android:id="@+id/movie_detail_review_item_content_tv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/movie_detail_row_margin_h"
+        android:layout_marginStart="@dimen/movie_detail_row_margin_h"
+        android:gravity="start|center_vertical"
+        android:textSize="@dimen/movie_detail_paragraph_text_size"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/movie_detail_review_item_author_tv"
+        app:layout_constraintBottom_toTopOf="@+id/movie_detail_review_item_separator_v"
+        tools:text="@tools:sample/lorem" />
+
+
+    <!--Horizontal Separator-->
+    <View
+        android:id="@+id/movie_detail_review_item_separator_v"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/movie_detail_sub_separator_thickness"
+        android:layout_marginTop="@dimen/movie_detail_subrow_margin_v"
+        android:background="@android:color/darker_gray"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/movie_detail_review_item_content_tv" />
+
+</android.support.constraint.ConstraintLayout>

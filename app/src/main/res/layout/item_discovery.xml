@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/discovery_item_image_iv"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/discovery_item_height"
+        android:scaleType="centerCrop"
+        tools:src="@drawable/bg_movie_thumb">
+
+    </ImageView>
+
+    <TextView
+        android:id="@+id/discovery_item_title_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/discovery_item_image_iv"
+        android:layout_alignRight="@id/discovery_item_image_iv"
+        android:layout_centerVertical="false"
+        android:layout_marginEnd="@dimen/discovery_item_image_text_margin"
+        android:layout_marginStart="@dimen/discovery_item_image_text_margin"
+        android:layout_marginTop="@dimen/discovery_item_image_text_margin_top"
+        android:gravity="center"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:visibility="gone"
+        tools:text="TextView Text Above ImageView" />
+
+    <ProgressBar
+        android:id="@+id/discovery_item_loading_pb"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/discovery_item_loading_height"
+        android:layout_margin="@dimen/discovery_item_loading_margin"
+        android:visibility="gone" />
+</RelativeLayout>
