@@ -32,6 +32,7 @@ import com.example.android.bakingapp.data.FavoritesDao;
 import com.example.android.bakingapp.data.FavoritesDatabase;
 import com.example.android.bakingapp.data.Movie;
 import com.example.android.bakingapp.data.MoviesContract;
+import com.example.android.bakingapp.data.Recipe;
 import com.example.android.bakingapp.utilities.GsonRequest;
 import com.example.android.bakingapp.utilities.NetworkUtils;
 import com.example.android.bakingapp.utilities.TMDbUtils;
@@ -373,6 +374,9 @@ public class DiscoveryActivity extends AppCompatActivity {
      */
     public void discoverMore(SortOption sortOption) {
 
+        // FIXME testing,,,
+        loadUrlBaking("https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json");
+
         if (SortOption.FAVORITES.equals(sortOption)) {
             setupFavoritesAdapter();
         } else {
@@ -464,6 +468,53 @@ public class DiscoveryActivity extends AppCompatActivity {
                 });
 
         NetworkUtils.get(DiscoveryActivity.this).addToRequestQueue(movieRequest);
+    }
+
+    // TODO replace the above loadUrl(url)
+    private void loadUrlBaking(String url) {
+
+//        if (!isLoading) {
+//            isLoading = true;
+//            discoveryAdapter.startLoading();
+//        }
+
+        Request recipesRequest
+                = new GsonRequest<Recipe[]>(Request.Method.GET,
+                url,
+                null,
+                Recipe[].class,
+                null,
+                new Response.Listener<Recipe[]>() {
+                    @Override
+                    public void onResponse(Recipe[] recipes) {
+//                        if (isLoading) {
+//                            isLoading = false;
+//                            discoveryAdapter.stopLoading();
+//                        }
+                        Log.d(TAG, "Movie Page: " + recipes);
+
+//                        pageCount = recipes.getPage();
+//                        totalPageCount = recipes.getTotalPages();
+//                        ((ListDiscoveryAdapter) discoveryAdapter).addAll(recipes.getResults());
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+//                        if (isLoading) {
+//                            isLoading = false;
+//                            discoveryAdapter.stopLoading();
+//                        }
+//
+//                        Toast.makeText(DiscoveryActivity.this,
+//                                getString(R.string.discovery_load_error), Toast.LENGTH_LONG).show();
+                        Log.e(TAG, "VolleyError: " + error.getMessage());
+                    }
+                });
+
+        NetworkUtils.get(DiscoveryActivity.this).addToRequestQueue(recipesRequest);
     }
 
     private void loadFavorites(Parcelable layoutState) {
