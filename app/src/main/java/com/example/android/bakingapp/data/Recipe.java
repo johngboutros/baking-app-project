@@ -8,18 +8,18 @@ import java.util.List;
 
 public class Recipe {
 
-    long id;
+    Long id;
     String name;
     List<Ingredient> ingredients;
     List<Step> steps;
     int servings;
     String image;
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
