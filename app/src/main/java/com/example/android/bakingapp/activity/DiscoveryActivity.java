@@ -22,11 +22,11 @@ import android.widget.Toast;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.example.android.bakingapp.R;
+import com.example.android.bakingapp.adapter.AbstractAdapter;
 import com.example.android.bakingapp.adapter.AbstractDiscoveryAdapter;
-import com.example.android.bakingapp.adapter.AbstractDiscoveryAdapter.MovieClickListener;
 import com.example.android.bakingapp.adapter.CursorDiscoveryAdapter;
 import com.example.android.bakingapp.adapter.ListDiscoveryAdapter;
-import com.example.android.bakingapp.R;
 import com.example.android.bakingapp.components.PaginationScrollListener;
 import com.example.android.bakingapp.data.FavoritesDao;
 import com.example.android.bakingapp.data.FavoritesDatabase;
@@ -117,7 +117,7 @@ public class DiscoveryActivity extends AppCompatActivity {
     // private CursorDiscoveryAdapter favoritesAdapter;
 
     // MovieClickListener
-    private MovieClickListener movieClickListener;
+    private AbstractAdapter.ItemClickListener movieClickListener;
 
     // Scroll listener
     private ScrollListener scrollListener;
@@ -186,9 +186,9 @@ public class DiscoveryActivity extends AppCompatActivity {
 
     private void registerMovieClickListener(AbstractDiscoveryAdapter discoveryAdapter) {
         if (movieClickListener == null) {
-            movieClickListener = new MovieClickListener() {
+            movieClickListener = new AbstractAdapter.ItemClickListener<Movie>() {
                 @Override
-                public void onMovieClicked(Movie movie) {
+                public void onClick(Movie movie) {
                     // launch MovieDetails Activity
                     Intent intent = new Intent(DiscoveryActivity.this,
                             MovieDetailsActivity.class);
@@ -197,13 +197,13 @@ public class DiscoveryActivity extends AppCompatActivity {
                     startActivity(intent);
                 }
             };
-            discoveryAdapter.addMovieClickListener(movieClickListener);
+            discoveryAdapter.addItemClickListener(movieClickListener);
         }
     }
 
     private void unregisterMovieClickListener(AbstractDiscoveryAdapter discoveryAdapter) {
         if (movieClickListener != null) {
-            discoveryAdapter.removeMovieClickListener(movieClickListener);
+            discoveryAdapter.removeItemClickListener(movieClickListener);
             movieClickListener = null;
         }
     }
@@ -375,7 +375,9 @@ public class DiscoveryActivity extends AppCompatActivity {
     public void discoverMore(SortOption sortOption) {
 
         // FIXME testing,,,
-        loadUrlBaking("https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json");
+//        setupFavoritesAdapter();
+//        loadBakingRecipes();
+//        if (true) return;
 
         if (SortOption.FAVORITES.equals(sortOption)) {
             setupFavoritesAdapter();
@@ -471,12 +473,14 @@ public class DiscoveryActivity extends AppCompatActivity {
     }
 
     // TODO replace the above loadUrl(url)
-    private void loadUrlBaking(String url) {
+    private void loadBakingRecipes() {
 
-//        if (!isLoading) {
-//            isLoading = true;
-//            discoveryAdapter.startLoading();
-//        }
+        if (!isLoading) {
+            isLoading = true;
+            discoveryAdapter.startLoading();
+        }
+
+        String url = "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json";
 
         Request recipesRequest
                 = new GsonRequest<Recipe[]>(Request.Method.GET,
@@ -487,15 +491,15 @@ public class DiscoveryActivity extends AppCompatActivity {
                 new Response.Listener<Recipe[]>() {
                     @Override
                     public void onResponse(Recipe[] recipes) {
-//                        if (isLoading) {
-//                            isLoading = false;
-//                            discoveryAdapter.stopLoading();
-//                        }
+                        if (isLoading) {
+                            isLoading = false;
+                            discoveryAdapter.stopLoading();
+                        }
                         Log.d(TAG, "Movie Page: " + recipes);
 
 //                        pageCount = recipes.getPage();
 //                        totalPageCount = recipes.getTotalPages();
-//                        ((ListDiscoveryAdapter) discoveryAdapter).addAll(recipes.getResults());
+//                        ((ListDiscoveryAdapter) discoveryAdapter).addAll(recipes);
 
                     }
                 },
@@ -503,13 +507,13 @@ public class DiscoveryActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
 
-//                        if (isLoading) {
-//                            isLoading = false;
-//                            discoveryAdapter.stopLoading();
-//                        }
-//
-//                        Toast.makeText(DiscoveryActivity.this,
-//                                getString(R.string.discovery_load_error), Toast.LENGTH_LONG).show();
+                        if (isLoading) {
+                            isLoading = false;
+                            discoveryAdapter.stopLoading();
+                        }
+
+                        Toast.makeText(DiscoveryActivity.this,
+                                getString(R.string.discovery_load_error), Toast.LENGTH_LONG).show();
                         Log.e(TAG, "VolleyError: " + error.getMessage());
                     }
                 });

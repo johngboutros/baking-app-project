@@ -28,15 +28,10 @@ import butterknife.ButterKnife;
  * Created by john on 10/04/18.
  */
 
-public abstract class AbstractDiscoveryAdapter extends RecyclerView.Adapter<AbstractDiscoveryAdapter.ViewHolder> {
-
-    private final Context context;
-
-    // Registered Movie Click Listeners
-    private List<MovieClickListener> movieClickListeners = new ArrayList<MovieClickListener>();
+public abstract class AbstractDiscoveryAdapter extends AbstractAdapter<Movie, AbstractDiscoveryAdapter.ViewHolder> {
 
     protected AbstractDiscoveryAdapter(Context context) {
-        this.context = context;
+        super(context);
     }
 
     /**
@@ -159,8 +154,8 @@ public abstract class AbstractDiscoveryAdapter extends RecyclerView.Adapter<Abst
                 holder.image.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        for (AbstractDiscoveryAdapter.MovieClickListener listener : movieClickListeners) {
-                            listener.onMovieClicked(movie);
+                        for (ItemClickListener listener : getItemClickListeners()) {
+                            listener.onClick(movie);
                         }
                     }
                 });
@@ -279,41 +274,4 @@ public abstract class AbstractDiscoveryAdapter extends RecyclerView.Adapter<Abst
         return ItemType.values()[itemViewType];
     }
 
-    /**
-     * Movie Click Listener.
-     */
-    public static interface MovieClickListener {
-        /**
-         * To be implemented for desired behavior when a movie clicked.
-         *
-         * @param movie clicked movie
-         */
-        public void onMovieClicked(Movie movie);
-    }
-
-    /**
-     * Registers a MovieClickListener
-     *
-     * @param listener
-     */
-    public void addMovieClickListener(MovieClickListener listener) {
-        movieClickListeners.add(listener);
-    }
-
-    /**
-     * Unregisters a MovieClickListener
-     *
-     * @param listener
-     */
-    public void removeMovieClickListener(MovieClickListener listener) {
-        movieClickListeners.remove(listener);
-    }
-
-    protected abstract Movie getItem(int position);
-
-    public abstract void startLoading();
-
-    public abstract void stopLoading();
-
-    public abstract void clear();
 }
