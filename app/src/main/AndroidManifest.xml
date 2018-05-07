@@ -19,7 +19,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.example.android.bakingapp.activity.MovieDetailsActivity"
+            android:name="com.example.android.bakingapp.activity.RecipeDetailsActivity"
             android:parentActivityName="com.example.android.bakingapp.activity.DiscoveryActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

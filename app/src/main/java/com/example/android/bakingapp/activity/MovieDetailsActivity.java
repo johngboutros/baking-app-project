@@ -546,7 +546,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
 
         // Inflate menu resource file.
-        getMenuInflater().inflate(R.menu.activity_movie_details, menu);
+        getMenuInflater().inflate(R.menu.activity_recipe_details, menu);
 
         // Return true to display menu
         return true;

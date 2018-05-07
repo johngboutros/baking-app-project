@@ -1,5 +1,6 @@
 package com.example.android.bakingapp.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
@@ -66,7 +67,7 @@ public class DiscoveryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         // TODO Change layout
-        setContentView(R.layout.activity_discovery);
+        setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
         recyclerView.setHasFixedSize(true);
@@ -103,11 +104,11 @@ public class DiscoveryActivity extends AppCompatActivity {
                 @Override
                 public void onClick(Recipe recipe) {
                     // TODO launch RecipeDetail Activity
-//                    Intent intent = new Intent(DiscoveryActivity.this,
-//                            MovieDetailsActivity.class);
-//                    intent.putExtra(MovieDetailsActivity.MOVIE_EXTRA_PARAM, Parcels.wrap(recipe));
-//
-//                    startActivity(intent);
+                    Intent intent = new Intent(DiscoveryActivity.this,
+                            RecipeDetailsActivity.class);
+                    intent.putExtra(RecipeDetailsActivity.RECIPE_EXTRA_PARAM, Parcels.wrap(recipe));
+
+                    startActivity(intent);
                 }
             };
             adapter.addItemClickListener(itemClickListener);
@@ -172,7 +173,7 @@ public class DiscoveryActivity extends AppCompatActivity {
                         }
 
                         Toast.makeText(DiscoveryActivity.this,
-                                getString(R.string.discovery_load_error), Toast.LENGTH_LONG).show();
+                                getString(R.string.recipes_load_error), Toast.LENGTH_LONG).show();
                         Log.e(TAG, "VolleyError: " + error.getMessage());
                     }
                 });
