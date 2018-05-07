@@ -1,11 +1,14 @@
 package com.example.android.bakingapp.data;
 
+import org.parceler.Parcel;
+
 import java.util.List;
 
 /**
  * Created by john on 06/05/18.
  */
 
+@Parcel
 public class Recipe {
 
     Long id;

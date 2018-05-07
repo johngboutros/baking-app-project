@@ -2,12 +2,7 @@ package com.example.android.bakingapp.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.ContentObserver;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
@@ -24,23 +19,18 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.example.android.bakingapp.R;
 import com.example.android.bakingapp.adapter.AbstractAdapter;
-import com.example.android.bakingapp.adapter.AbstractDiscoveryAdapter;
-import com.example.android.bakingapp.adapter.CursorDiscoveryAdapter;
-import com.example.android.bakingapp.adapter.ListDiscoveryAdapter;
+import com.example.android.bakingapp.adapter.RecipesListAdapter;
 import com.example.android.bakingapp.components.PaginationScrollListener;
-import com.example.android.bakingapp.data.FavoritesDao;
-import com.example.android.bakingapp.data.FavoritesDatabase;
 import com.example.android.bakingapp.data.Movie;
-import com.example.android.bakingapp.data.MoviesContract;
 import com.example.android.bakingapp.data.Recipe;
 import com.example.android.bakingapp.utilities.GsonRequest;
 import com.example.android.bakingapp.utilities.NetworkUtils;
-import com.example.android.bakingapp.utilities.TMDbUtils;
 
 import org.parceler.Parcel;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindInt;
@@ -108,25 +98,28 @@ public class DiscoveryActivity extends AppCompatActivity {
     private final static String TITLE_BUNDLE_KEY = "title";
 
     // TMDb API / Favorites Discovery Adapter
-    private AbstractDiscoveryAdapter discoveryAdapter;
+//    private AbstractDiscoveryAdapter recipesAdapter;
+
+    // Recipes Adapter
+    private RecipesListAdapter recipesAdapter;
 
     // TMDb API Discovery Adapter
-    // private ListDiscoveryAdapter discoveryAdapter;
+    // private ListDiscoveryAdapter recipesAdapter;
 
     // Favorites Adapter
     // private CursorDiscoveryAdapter favoritesAdapter;
 
     // MovieClickListener
-    private AbstractAdapter.ItemClickListener movieClickListener;
+    private AbstractAdapter.ItemClickListener itemClickListener;
 
     // Scroll listener
     private ScrollListener scrollListener;
 
     // Favorites Observer
-    private FavoritesObserver favoritesObserver;
+//    private FavoritesObserver favoritesObserver;
 
     // Favorites DAO
-    private FavoritesDao favoritesDao;
+//    private FavoritesDao favoritesDao;
 
 
     @Override
@@ -136,7 +129,7 @@ public class DiscoveryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_discovery);
         ButterKnife.bind(this);
 
-        favoritesDao = FavoritesDatabase.get(this).favoritesDao();
+//        favoritesDao = FavoritesDatabase.get(this).favoritesDao();
 
         discoveryRecyclerView.setHasFixedSize(true);
         GridLayoutManager layoutManager = new GridLayoutManager(this, gridColumns);
@@ -147,11 +140,12 @@ public class DiscoveryActivity extends AppCompatActivity {
                 .getString(sortPrefKey, sortPrefDefault);
 
 
-        if (sortPrefFavorites.equals(preferenceValue)) {
-            setupFavoritesAdapter();
-        } else {
-            setupDiscoveryAdapter();
-        }
+//        if (sortPrefFavorites.equals(preferenceValue)) {
+//            setupFavoritesAdapter();
+//        } else {
+//            setupDiscoveryAdapter();
+//        }
+        setupRecipesAdapter();
 
         if (savedInstanceState == null) {
             loadSortPreferences(preferenceValue);
@@ -164,29 +158,29 @@ public class DiscoveryActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         // Listeners should also be registered once an Adapter is re-initialized
-        if (discoveryAdapter != null) {
-            registerMovieClickListener(discoveryAdapter);
-            if (discoveryAdapter instanceof ListDiscoveryAdapter)
-                registerScrollListener();
+        if (recipesAdapter != null) {
+            registerMovieClickListener(recipesAdapter);
+//            if (recipesAdapter instanceof ListDiscoveryAdapter)
+//                registerScrollListener();
         }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        unregisterMovieClickListener(discoveryAdapter);
+        unregisterMovieClickListener(recipesAdapter);
         unregisterScrollListener();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterFavoritesObserver();
+//        unregisterFavoritesObserver();
     }
 
-    private void registerMovieClickListener(AbstractDiscoveryAdapter discoveryAdapter) {
-        if (movieClickListener == null) {
-            movieClickListener = new AbstractAdapter.ItemClickListener<Movie>() {
+    private void registerMovieClickListener(RecipesListAdapter discoveryAdapter) {
+        if (itemClickListener == null) {
+            itemClickListener = new AbstractAdapter.ItemClickListener<Movie>() {
                 @Override
                 public void onClick(Movie movie) {
                     // launch MovieDetails Activity
@@ -197,14 +191,14 @@ public class DiscoveryActivity extends AppCompatActivity {
                     startActivity(intent);
                 }
             };
-            discoveryAdapter.addItemClickListener(movieClickListener);
+            discoveryAdapter.addItemClickListener(itemClickListener);
         }
     }
 
-    private void unregisterMovieClickListener(AbstractDiscoveryAdapter discoveryAdapter) {
-        if (movieClickListener != null) {
-            discoveryAdapter.removeItemClickListener(movieClickListener);
-            movieClickListener = null;
+    private void unregisterMovieClickListener(RecipesListAdapter adapter) {
+        if (itemClickListener != null) {
+            adapter.removeItemClickListener(itemClickListener);
+            itemClickListener = null;
         }
     }
 
@@ -223,20 +217,20 @@ public class DiscoveryActivity extends AppCompatActivity {
         }
     }
 
-    private void registerFavoritesObserver() {
-        if (favoritesObserver == null) {
-            favoritesObserver = new FavoritesObserver(new Handler());
-            getContentResolver().registerContentObserver(MoviesContract.CONTENT_URI,
-                    true, favoritesObserver);
-        }
-    }
+//    private void registerFavoritesObserver() {
+//        if (favoritesObserver == null) {
+//            favoritesObserver = new FavoritesObserver(new Handler());
+//            getContentResolver().registerContentObserver(MoviesContract.CONTENT_URI,
+//                    true, favoritesObserver);
+//        }
+//    }
 
-    private void unregisterFavoritesObserver() {
-        if (favoritesObserver != null) {
-            getContentResolver().unregisterContentObserver(favoritesObserver);
-            favoritesObserver = null;
-        }
-    }
+//    private void unregisterFavoritesObserver() {
+//        if (favoritesObserver != null) {
+//            getContentResolver().unregisterContentObserver(favoritesObserver);
+//            favoritesObserver = null;
+//        }
+//    }
 
     /**
      * Initialize the contents of the Activity's standard options menu.  You
@@ -361,123 +355,123 @@ public class DiscoveryActivity extends AppCompatActivity {
     }
 
     /**
-     * Loads more movies using the current sort option.
+     * Loads more recipes using the current sort option.
      */
     public void discoverMore() {
         discoverMore(null);
     }
 
     /**
-     * Loads more movies using the provided sort option.
+     * Loads more recipes using the provided sort option.
      *
      * @param sortOption
      */
     public void discoverMore(SortOption sortOption) {
 
         // FIXME testing,,,
-//        setupFavoritesAdapter();
-//        loadBakingRecipes();
+        setupRecipesAdapter();
+        loadBakingRecipes();
 //        if (true) return;
 
-        if (SortOption.FAVORITES.equals(sortOption)) {
-            setupFavoritesAdapter();
-        } else {
-            setupDiscoveryAdapter();
-        }
-
-        if (sortOption != null && !currentSortOption.equals(sortOption)) {
-            this.currentSortOption = sortOption;
-            if (isLoading) {
-                isLoading = false;
-                discoveryAdapter.stopLoading();
-            }
-            discoveryAdapter.clear();
-            pageCount = 0;
-            totalPageCount = 0;
-        }
-
-        Integer page = pageCount > 0 ? pageCount + 1 : null;
-
-        String url = null;
-
-        switch (this.currentSortOption) {
-            case FAVORITES:
-                loadFavorites(null);
-                break;
-            case POPULARITY:
-                url = TMDbUtils.buildPopularMoviesURL(page).toString();
-                loadUrl(url);
-                break;
-            case TOP_RATED:
-                url = TMDbUtils.buildTopRatedMoviesURL(page).toString();
-                loadUrl(url);
-                break;
-            case RELEASE_DATE:
-                url = TMDbUtils.buildDiscoveryUrl(TMDbUtils.SortBy.RELEASE_DATE, page).toString();
-                loadUrl(url);
-                break;
-            case REVENUE:
-                url = TMDbUtils.buildDiscoveryUrl(TMDbUtils.SortBy.REVENUE, page).toString();
-                loadUrl(url);
-                break;
-            default:
-                url = TMDbUtils.buildDiscoveryUrl(TMDbUtils.SortBy.POPULARITY, page).toString();
-                loadUrl(url);
-        }
+//        if (SortOption.FAVORITES.equals(sortOption)) {
+//            setupFavoritesAdapter();
+//        } else {
+//            setupDiscoveryAdapter();
+//        }
+//
+//        if (sortOption != null && !currentSortOption.equals(sortOption)) {
+//            this.currentSortOption = sortOption;
+//            if (isLoading) {
+//                isLoading = false;
+//                recipesAdapter.stopLoading();
+//            }
+//            recipesAdapter.clear();
+//            pageCount = 0;
+//            totalPageCount = 0;
+//        }
+//
+//        Integer page = pageCount > 0 ? pageCount + 1 : null;
+//
+//        String url = null;
+//
+//        switch (this.currentSortOption) {
+//            case FAVORITES:
+//                loadFavorites(null);
+//                break;
+//            case POPULARITY:
+//                url = TMDbUtils.buildPopularMoviesURL(page).toString();
+//                loadUrl(url);
+//                break;
+//            case TOP_RATED:
+//                url = TMDbUtils.buildTopRatedMoviesURL(page).toString();
+//                loadUrl(url);
+//                break;
+//            case RELEASE_DATE:
+//                url = TMDbUtils.buildDiscoveryUrl(TMDbUtils.SortBy.RELEASE_DATE, page).toString();
+//                loadUrl(url);
+//                break;
+//            case REVENUE:
+//                url = TMDbUtils.buildDiscoveryUrl(TMDbUtils.SortBy.REVENUE, page).toString();
+//                loadUrl(url);
+//                break;
+//            default:
+//                url = TMDbUtils.buildDiscoveryUrl(TMDbUtils.SortBy.POPULARITY, page).toString();
+//                loadUrl(url);
+//        }
     }
 
-    private void loadUrl(String url) {
-
-        if (!isLoading) {
-            isLoading = true;
-            discoveryAdapter.startLoading();
-        }
-
-        Request movieRequest
-                = new GsonRequest<Movie.Page>(Request.Method.GET,
-                url,
-                null,
-                Movie.Page.class,
-                null,
-                new Response.Listener<Movie.Page>() {
-                    @Override
-                    public void onResponse(Movie.Page moviePage) {
-                        if (isLoading) {
-                            isLoading = false;
-                            discoveryAdapter.stopLoading();
-                        }
-                        Log.d(TAG, "Movie Page: " + moviePage);
-
-                        pageCount = moviePage.getPage();
-                        totalPageCount = moviePage.getTotalPages();
-                        ((ListDiscoveryAdapter) discoveryAdapter).addAll(moviePage.getResults());
-
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-
-                        if (isLoading) {
-                            isLoading = false;
-                            discoveryAdapter.stopLoading();
-                        }
-
-                        Toast.makeText(DiscoveryActivity.this,
-                                getString(R.string.discovery_load_error), Toast.LENGTH_LONG).show();
-                        Log.e(TAG, "VolleyError: " + error.getMessage());
-                    }
-                });
-
-        NetworkUtils.get(DiscoveryActivity.this).addToRequestQueue(movieRequest);
-    }
+//    private void loadUrl(String url) {
+//
+//        if (!isLoading) {
+//            isLoading = true;
+//            recipesAdapter.startLoading();
+//        }
+//
+//        Request movieRequest
+//                = new GsonRequest<Movie.Page>(Request.Method.GET,
+//                url,
+//                null,
+//                Movie.Page.class,
+//                null,
+//                new Response.Listener<Movie.Page>() {
+//                    @Override
+//                    public void onResponse(Movie.Page moviePage) {
+//                        if (isLoading) {
+//                            isLoading = false;
+//                            recipesAdapter.stopLoading();
+//                        }
+//                        Log.d(TAG, "Movie Page: " + moviePage);
+//
+//                        pageCount = moviePage.getPage();
+//                        totalPageCount = moviePage.getTotalPages();
+//                        ((ListDiscoveryAdapter) recipesAdapter).addAll(moviePage.getResults());
+//
+//                    }
+//                },
+//                new Response.ErrorListener() {
+//                    @Override
+//                    public void onErrorResponse(VolleyError error) {
+//
+//                        if (isLoading) {
+//                            isLoading = false;
+//                            recipesAdapter.stopLoading();
+//                        }
+//
+//                        Toast.makeText(DiscoveryActivity.this,
+//                                getString(R.string.discovery_load_error), Toast.LENGTH_LONG).show();
+//                        Log.e(TAG, "VolleyError: " + error.getMessage());
+//                    }
+//                });
+//
+//        NetworkUtils.get(DiscoveryActivity.this).addToRequestQueue(movieRequest);
+//    }
 
     // TODO replace the above loadUrl(url)
     private void loadBakingRecipes() {
 
         if (!isLoading) {
             isLoading = true;
-            discoveryAdapter.startLoading();
+            recipesAdapter.startLoading();
         }
 
         String url = "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json";
@@ -493,13 +487,14 @@ public class DiscoveryActivity extends AppCompatActivity {
                     public void onResponse(Recipe[] recipes) {
                         if (isLoading) {
                             isLoading = false;
-                            discoveryAdapter.stopLoading();
+                            recipesAdapter.stopLoading();
                         }
                         Log.d(TAG, "Movie Page: " + recipes);
 
 //                        pageCount = recipes.getPage();
 //                        totalPageCount = recipes.getTotalPages();
-//                        ((ListDiscoveryAdapter) discoveryAdapter).addAll(recipes);
+//                        ((ListDiscoveryAdapter) recipesAdapter).addAll(recipes);
+                        recipesAdapter.addAll(Arrays.asList(recipes));
 
                     }
                 },
@@ -509,7 +504,7 @@ public class DiscoveryActivity extends AppCompatActivity {
 
                         if (isLoading) {
                             isLoading = false;
-                            discoveryAdapter.stopLoading();
+                            recipesAdapter.stopLoading();
                         }
 
                         Toast.makeText(DiscoveryActivity.this,
@@ -521,115 +516,129 @@ public class DiscoveryActivity extends AppCompatActivity {
         NetworkUtils.get(DiscoveryActivity.this).addToRequestQueue(recipesRequest);
     }
 
-    private void loadFavorites(Parcelable layoutState) {
+//    private void loadFavorites(Parcelable layoutState) {
+//
+//        /*
+//          Using ContentObserver
+//         */
+//        favoritesObserver.observe(layoutState);
+//
+//        // Start loading
+////        if (!isLoading) {
+////            isLoading = true;
+////            recipesAdapter.startLoading();
+////        }
+//
+////        AsyncTask.execute(new Runnable() {
+////            @Override
+////            public void run() {
+////
+////                /*
+////                  Using Cursor by ContentResolver
+////                 */
+//////                final Cursor cursor = getContentResolver().query(MoviesContract.CONTENT_URI,
+//////                        null, null, null, null);
+////
+////                /*
+////                   Using Cursor by Room
+////                  */
+//////                final Cursor cursor = favoritesDao.getAllCursor();
+////
+////                runOnUiThread(new Runnable() {
+////                    @Override
+////                    public void run() {
+////
+////                        if (!currentSortOption.equals(SortOption.FAVORITES))
+////                            return;
+////
+////                        // Stop loading
+////                        if (isLoading) {
+////                            isLoading = false;
+////                            recipesAdapter.stopLoading();
+////                        }
+////
+////                        ((CursorDiscoveryAdapter) recipesAdapter).swapCursor(cursor);
+////
+////                        Log.d(TAG, "Favorites loaded, size: " + cursor.getCount());
+////                    }
+////                });
+////            }
+////        });
+//
+//        /*
+//          Using Room's LiveData (requires ListDiscoveryAdapter)
+//
+//          (Recommended as besides leveraging Room's sync implementation
+//           and saving data access boilerplate code, it allows using the same
+//           Adapter as discovery which based on a List; eliminating the code
+//           to maintain both types of adapters e.g. listeners registration
+//           and instance restoring)
+//         */
+////        LiveData<List<Movie>> favorites = favoritesDao.getAllAsync();
+////
+////        favorites.observe(this, new Observer<List<Movie>>() {
+////            @Override
+////            public void onChanged(@Nullable List<Movie> recipes) {
+////
+////                if (!currentSortOption.equals(SortOption.FAVORITES))
+////                    return;
+////
+////                // Stop loading
+////                if (isLoading) {
+////                    isLoading = false;
+////                    recipesAdapter.stopLoading();
+////                }
+////
+////                Log.d(TAG, "Favorites loaded, size: " + recipes.size());
+////
+////                recipesAdapter.setMovies(recipes);
+////
+////            }
+////        });
+//
+//    }
 
-        /*
-          Using ContentObserver
-         */
-        favoritesObserver.observe(layoutState);
-
-        // Start loading
-//        if (!isLoading) {
-//            isLoading = true;
-//            discoveryAdapter.startLoading();
-//        }
-
-//        AsyncTask.execute(new Runnable() {
-//            @Override
-//            public void run() {
-//
-//                /*
-//                  Using Cursor by ContentResolver
-//                 */
-////                final Cursor cursor = getContentResolver().query(MoviesContract.CONTENT_URI,
-////                        null, null, null, null);
-//
-//                /*
-//                   Using Cursor by Room
-//                  */
-////                final Cursor cursor = favoritesDao.getAllCursor();
-//
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//
-//                        if (!currentSortOption.equals(SortOption.FAVORITES))
-//                            return;
-//
-//                        // Stop loading
-//                        if (isLoading) {
-//                            isLoading = false;
-//                            discoveryAdapter.stopLoading();
-//                        }
-//
-//                        ((CursorDiscoveryAdapter) discoveryAdapter).swapCursor(cursor);
-//
-//                        Log.d(TAG, "Favorites loaded, size: " + cursor.getCount());
-//                    }
-//                });
-//            }
-//        });
-
-        /*
-          Using Room's LiveData (requires ListDiscoveryAdapter)
-
-          (Recommended as besides leveraging Room's sync implementation
-           and saving data access boilerplate code, it allows using the same
-           Adapter as discovery which based on a List; eliminating the code
-           to maintain both types of adapters e.g. listeners registration
-           and instance restoring)
-         */
-//        LiveData<List<Movie>> favorites = favoritesDao.getAllAsync();
-//
-//        favorites.observe(this, new Observer<List<Movie>>() {
-//            @Override
-//            public void onChanged(@Nullable List<Movie> movies) {
-//
-//                if (!currentSortOption.equals(SortOption.FAVORITES))
-//                    return;
-//
-//                // Stop loading
-//                if (isLoading) {
-//                    isLoading = false;
-//                    discoveryAdapter.stopLoading();
-//                }
-//
-//                Log.d(TAG, "Favorites loaded, size: " + movies.size());
-//
-//                discoveryAdapter.setMovies(movies);
-//
-//            }
-//        });
-
-    }
-
-    private void setupDiscoveryAdapter() {
-        if (discoveryAdapter != null && discoveryAdapter instanceof ListDiscoveryAdapter)
+    private void setupRecipesAdapter() {
+        if (recipesAdapter != null)
             return;
 
-        if (discoveryAdapter != null)
-            unregisterMovieClickListener(discoveryAdapter);
+//        if (recipesAdapter != null)
+//            unregisterMovieClickListener(recipesAdapter);
 
-        discoveryAdapter = new ListDiscoveryAdapter(this);
-        discoveryRecyclerView.setAdapter(discoveryAdapter);
-        registerMovieClickListener(discoveryAdapter);
-        registerScrollListener();
-        unregisterFavoritesObserver();
+        recipesAdapter = new RecipesListAdapter(this);
+        discoveryRecyclerView.setAdapter(recipesAdapter);
+//        registerMovieClickListener(recipesAdapter);
+//        unregisterScrollListener();
+//        registerFavoritesObserver();
     }
 
-    private void setupFavoritesAdapter() {
-        if (discoveryAdapter != null && discoveryAdapter instanceof CursorDiscoveryAdapter)
-            return;
+//    private void setupDiscoveryAdapter() {
+//        if (recipesAdapter != null && recipesAdapter instanceof ListDiscoveryAdapter)
+//            return;
+//
+//        if (recipesAdapter != null)
+//            unregisterMovieClickListener(recipesAdapter);
+//
+//        recipesAdapter = new ListDiscoveryAdapter(this);
+//        discoveryRecyclerView.setAdapter(recipesAdapter);
+//        registerMovieClickListener(recipesAdapter);
+//        registerScrollListener();
+//        unregisterFavoritesObserver();
+//    }
 
-        if (discoveryAdapter != null)
-            unregisterMovieClickListener(discoveryAdapter);
-
-        discoveryAdapter = new CursorDiscoveryAdapter(this);
-        discoveryRecyclerView.setAdapter(discoveryAdapter);
-        registerMovieClickListener(discoveryAdapter);
-        unregisterScrollListener();
-        registerFavoritesObserver();
-    }
+//    private void setupFavoritesAdapter() {
+//        if (recipesAdapter != null && recipesAdapter instanceof CursorDiscoveryAdapter)
+//            return;
+//
+//        if (recipesAdapter != null)
+//            unregisterMovieClickListener(recipesAdapter);
+//
+//        recipesAdapter = new CursorDiscoveryAdapter(this);
+//        discoveryRecyclerView.setAdapter(recipesAdapter);
+//        registerMovieClickListener(recipesAdapter);
+//        unregisterScrollListener();
+//        registerFavoritesObserver();
+//    }
 
     /**
      * Generates the adapter's state as a {@link Parcelable}
@@ -640,10 +649,8 @@ public class DiscoveryActivity extends AppCompatActivity {
 
         SavedInstanceState state = new SavedInstanceState();
 
-        if (discoveryAdapter != null) {
-            if (discoveryAdapter instanceof ListDiscoveryAdapter) {
-                state.movies = ((ListDiscoveryAdapter) discoveryAdapter).getMovies();
-            }
+        if (recipesAdapter != null) {
+            state.recipes = recipesAdapter.getRecipes();
         }
 
         state.pageCount = pageCount;
@@ -671,13 +678,9 @@ public class DiscoveryActivity extends AppCompatActivity {
         setTitle(title);
 
         // NOTE: setting the List directly inside the adapter setMovies() works as well as addAll()
-        if (discoveryAdapter != null) {
-            if (discoveryAdapter instanceof ListDiscoveryAdapter) {
-                ((ListDiscoveryAdapter) discoveryAdapter).setMovies(state.movies);
+        if (recipesAdapter != null) {
+                recipesAdapter.setRecipes(state.recipes);
                 discoveryRecyclerView.getLayoutManager().onRestoreInstanceState(layoutState); // useless?
-            } else if (discoveryAdapter instanceof CursorDiscoveryAdapter) {
-                loadFavorites(layoutState);
-            }
         }
 
         this.pageCount = state.pageCount;
@@ -691,8 +694,8 @@ public class DiscoveryActivity extends AppCompatActivity {
      */
     @Parcel
     static class SavedInstanceState {
-        // Discovered movies list
-        List<Movie> movies = new ArrayList<Movie>();
+        // Discovered recipes list
+        List<Recipe> recipes = new ArrayList<Recipe>();
         // Discovered pages count
         int pageCount;
         // Total result pages count
@@ -738,68 +741,68 @@ public class DiscoveryActivity extends AppCompatActivity {
         }
     }
 
-    class FavoritesObserver extends ContentObserver {
-
-        private Cursor mCursor;
-
-        public FavoritesObserver(Handler handler) {
-            super(handler);
-        }
-
-        @Override
-        public void onChange(boolean selfChange) {
-            this.onChange(selfChange, null);
-        }
-
-        @Override
-        public void onChange(boolean selfChange, Uri uri) {
-            observe(null);
-        }
-
-        private void cursorLoaded(Cursor cursor, Parcelable layoutState) {
-            ((CursorDiscoveryAdapter) discoveryAdapter).swapCursor(cursor);
-
-            if (layoutState != null) {
-                discoveryRecyclerView.getLayoutManager()
-                        .onRestoreInstanceState(layoutState);
-            }
-        }
-
-        private void observe(final Parcelable layoutState) {
-
-            if (mCursor != null) {
-                cursorLoaded(mCursor, layoutState);
-            }
-
-            if (!isLoading) {
-                isLoading = true;
-                discoveryAdapter.startLoading();
-            }
-            AsyncTask.execute(new Runnable() {
-                @Override
-                public void run() {
-
-                    mCursor = getContentResolver().query(MoviesContract.CONTENT_URI,
-                            null, null, null, null);
-
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-
-                            if (!currentSortOption.equals(SortOption.FAVORITES))
-                                return;
-
-                            if (isLoading) {
-                                isLoading = false;
-                                discoveryAdapter.stopLoading();
-                            }
-
-                            Log.d(TAG, "Favorites loaded, size: " + mCursor.getCount());
-                            cursorLoaded(mCursor, layoutState);
-                        }
-                    });
-                }
-            });
-        }
-    }
+//    class FavoritesObserver extends ContentObserver {
+//
+//        private Cursor mCursor;
+//
+//        public FavoritesObserver(Handler handler) {
+//            super(handler);
+//        }
+//
+//        @Override
+//        public void onChange(boolean selfChange) {
+//            this.onChange(selfChange, null);
+//        }
+//
+//        @Override
+//        public void onChange(boolean selfChange, Uri uri) {
+//            observe(null);
+//        }
+//
+//        private void cursorLoaded(Cursor cursor, Parcelable layoutState) {
+//            ((CursorDiscoveryAdapter) recipesAdapter).swapCursor(cursor);
+//
+//            if (layoutState != null) {
+//                discoveryRecyclerView.getLayoutManager()
+//                        .onRestoreInstanceState(layoutState);
+//            }
+//        }
+//
+//        private void observe(final Parcelable layoutState) {
+//
+//            if (mCursor != null) {
+//                cursorLoaded(mCursor, layoutState);
+//            }
+//
+//            if (!isLoading) {
+//                isLoading = true;
+//                recipesAdapter.startLoading();
+//            }
+//            AsyncTask.execute(new Runnable() {
+//                @Override
+//                public void run() {
+//
+//                    mCursor = getContentResolver().query(MoviesContract.CONTENT_URI,
+//                            null, null, null, null);
+//
+//                    runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//
+//                            if (!currentSortOption.equals(SortOption.FAVORITES))
+//                                return;
+//
+//                            if (isLoading) {
+//                                isLoading = false;
+//                                recipesAdapter.stopLoading();
+//                            }
+//
+//                            Log.d(TAG, "Favorites loaded, size: " + mCursor.getCount());
+//                            cursorLoaded(mCursor, layoutState);
+//                        }
+//                    });
+//                }
+//            });
+//        }
+//    }
 }
