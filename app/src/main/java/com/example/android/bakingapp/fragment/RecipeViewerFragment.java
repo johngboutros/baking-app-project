@@ -4,14 +4,20 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.android.bakingapp.R;
+import com.example.android.bakingapp.adapter.RecipeStepsAdapter;
 import com.example.android.bakingapp.data.Recipe;
 
 import org.parceler.Parcels;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -25,6 +31,9 @@ public class RecipeViewerFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String RECIPE_PARAM = "recipe";
+
+    @BindView(R.id.recipe_steps_rv)
+    RecyclerView recyclerView;
 
     // TODO: Rename and change types of parameters
     private Recipe recipe;
@@ -63,7 +72,23 @@ public class RecipeViewerFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_recipe_viewer, container, false);
+        View rootView = inflater
+                .inflate(R.layout.fragment_recipe_viewer, container, false);
+        ButterKnife.bind(this, rootView);
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(),
+                LinearLayoutManager.HORIZONTAL, false);
+
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setHasFixedSize(true);
+
+        RecipeStepsAdapter stepsAdapter = new RecipeStepsAdapter(getContext());
+        recyclerView.setAdapter(stepsAdapter);
+
+        stepsAdapter.setIngredients(recipe.getIngredients());
+        stepsAdapter.setSteps(recipe.getSteps());
+
+        return rootView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
