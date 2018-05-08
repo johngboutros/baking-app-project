@@ -2,18 +2,16 @@ package com.example.android.bakingapp.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ShareCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ImageView;
 import android.widget.ScrollView;
 
 import com.example.android.bakingapp.R;
 import com.example.android.bakingapp.data.Recipe;
-import com.example.android.bakingapp.utilities.TMDbUtils;
-import com.squareup.picasso.Picasso;
+import com.example.android.bakingapp.fragment.RecipeViewerFragment;
 
 import org.parceler.Parcels;
 
@@ -24,14 +22,11 @@ public class RecipeDetailsActivity extends AppCompatActivity {
 
     private static final String TAG = RecipeDetailsActivity.class.getSimpleName();
 
+    @BindView(R.id.recipe_details_scroll_sv)
+    ScrollView scrollView;
+
     // Movie Intent Extra param
     public static final String RECIPE_EXTRA_PARAM = "recipe";
-
-    @BindView(R.id.movie_detail_image_iv)
-    ImageView imageDisplay;
-
-    @BindView(R.id.movie_detail_scroll_sv)
-    ScrollView scrollView;
 
     // Share text (first trailer link if exists)
     private String shareText;
@@ -43,27 +38,34 @@ public class RecipeDetailsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_movie_details);
+        setContentView(R.layout.activity_recipe_details);
         ButterKnife.bind(this);
 
         final Recipe recipe = Parcels.unwrap(getIntent().getParcelableExtra(RECIPE_EXTRA_PARAM));
 
         setTitle(recipe.getName());
 
-        if (TextUtils.isEmpty(recipe.getImage())) {
+        RecipeViewerFragment recipeViewer = RecipeViewerFragment.newInstance(recipe);
 
-            imageDisplay.setImageDrawable(getResources().getDrawable(R.drawable.bg_movie_thumb));
+        FragmentManager fragmentManager = getSupportFragmentManager();
 
-        } else {
+        fragmentManager.beginTransaction().add(R.id.recipe_viewer_container, recipeViewer)
+                .commit();
 
-            String posterURL = TMDbUtils.buildPosterURL(recipe.getImage(), TMDbUtils.PosterSize.W185);
-
-            Picasso.with(this).load(posterURL)
-                    .fit()
-                    .centerCrop()
-                    .placeholder(R.drawable.bg_movie_thumb)
-                    .into(imageDisplay);
-        }
+//        if (TextUtils.isEmpty(recipe.getImage())) {
+//
+//            imageDisplay.setImageDrawable(getResources().getDrawable(R.drawable.bg_movie_thumb));
+//
+//        } else {
+//
+//            String posterURL = TMDbUtils.buildPosterURL(recipe.getImage(), TMDbUtils.PosterSize.W185);
+//
+//            Picasso.with(this).load(posterURL)
+//                    .fit()
+//                    .centerCrop()
+//                    .placeholder(R.drawable.bg_movie_thumb)
+//                    .into(imageDisplay);
+//        }
 
     }
 

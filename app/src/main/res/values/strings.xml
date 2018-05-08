@@ -21,4 +21,7 @@
     <string name="movie_detail_share_button">Share</string>
     <string name="movie_detail_share_chooser_title">How would you like to share this?</string>
 
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>
