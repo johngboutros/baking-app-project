@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,6 +13,7 @@ import android.view.ViewGroup;
 
 import com.example.android.bakingapp.R;
 import com.example.android.bakingapp.adapter.RecipeStepsAdapter;
+import com.example.android.bakingapp.adapter.RecipeStepsPagerAdapter;
 import com.example.android.bakingapp.data.Recipe;
 
 import org.parceler.Parcels;
@@ -32,8 +34,11 @@ public class RecipeViewerFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String RECIPE_PARAM = "recipe";
 
-    @BindView(R.id.recipe_steps_rv)
-    RecyclerView recyclerView;
+//    @BindView(R.id.recipe_steps_rv)
+//    RecyclerView recyclerView;
+
+    @BindView(R.id.recipe_steps_vp)
+    ViewPager viewPager;
 
     // TODO: Rename and change types of parameters
     private Recipe recipe;
@@ -76,17 +81,19 @@ public class RecipeViewerFragment extends Fragment {
                 .inflate(R.layout.fragment_recipe_viewer, container, false);
         ButterKnife.bind(this, rootView);
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(),
-                LinearLayoutManager.HORIZONTAL, false);
+//        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(),
+//                LinearLayoutManager.HORIZONTAL, false);
+//
+//        recyclerView.setLayoutManager(layoutManager);
+//        recyclerView.setHasFixedSize(true);
+//
+//        RecipeStepsAdapter stepsAdapter = new RecipeStepsAdapter(getContext());
+//        recyclerView.setAdapter(stepsAdapter);
+//
+//        stepsAdapter.setIngredients(recipe.getIngredients());
+//        stepsAdapter.setSteps(recipe.getSteps());
 
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setHasFixedSize(true);
-
-        RecipeStepsAdapter stepsAdapter = new RecipeStepsAdapter(getContext());
-        recyclerView.setAdapter(stepsAdapter);
-
-        stepsAdapter.setIngredients(recipe.getIngredients());
-        stepsAdapter.setSteps(recipe.getSteps());
+        viewPager.setAdapter(new RecipeStepsPagerAdapter(getContext(), recipe));
 
         return rootView;
     }
