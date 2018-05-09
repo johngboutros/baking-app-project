@@ -51,23 +51,22 @@ public class RecipeStepsPagerAdapter extends PagerAdapter {
         // TODO Select an ingredient page or step one based on position
         int layoutResId = R.layout.fragment_recipe_viewer_ingredients;
 
-        LayoutInflater inflater = LayoutInflater.from(context);
-        ViewGroup layout = (ViewGroup) inflater.inflate(layoutResId,
+        ViewGroup layout = (ViewGroup) inflater().inflate(layoutResId,
                 container, false);
 
         LinearLayout ingredientsContainer = layout.findViewById(R.id.ingredients_container_ll);
-        createIngredients(ingredientsContainer, recipe.getIngredients());
+        displayIngredients(ingredientsContainer, recipe.getIngredients());
 
         container.addView(layout);
         return layout;
     }
 
-    private void createIngredients(ViewGroup container, List<Ingredient> ingredients) {
+    private void displayIngredients(ViewGroup container, List<Ingredient> ingredients) {
 
         for (Ingredient ingredient : ingredients) {
 
-            View ingredientItem = LayoutInflater.from(context)
-                    .inflate(R.layout.fragment_recipe_viewer_ingredients_item, null,
+            View ingredientItem = inflater()
+                    .inflate(R.layout.fragment_recipe_viewer_ingredients_item, container,
                             false);
 
             TextView quantityTv = ingredientItem.findViewById(R.id.quantity_tv);
@@ -80,6 +79,14 @@ public class RecipeStepsPagerAdapter extends PagerAdapter {
 
             container.addView(ingredientItem);
         }
+    }
+
+    private LayoutInflater inflater() {
+        return LayoutInflater.from(context);
+    }
+
+    private LayoutInflater inflater(Context context) {
+        return LayoutInflater.from(context);
     }
 
     /**
@@ -102,7 +109,15 @@ public class RecipeStepsPagerAdapter extends PagerAdapter {
      */
     @Override
     public int getCount() {
-        return 0;
+        return (hasIngredients() ? 1 : 0) + (hasSteps() ? recipe.getSteps().size() : 0);
+    }
+
+    private boolean hasIngredients() {
+        return recipe.getIngredients() != null && recipe.getIngredients().size() > 0;
+    }
+
+    private boolean hasSteps() {
+        return recipe.getSteps() != null && recipe.getSteps().size() > 0;
     }
 
     /**

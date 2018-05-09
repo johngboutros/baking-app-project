@@ -11,17 +11,17 @@
 
     <TextView
         android:id="@+id/ingredients_label_tv"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/movie_detail_row_margin_h"
         android:layout_marginStart="@dimen/movie_detail_row_margin_h"
         android:gravity="start|center_vertical"
+        android:text="@string/ingredients_label"
         android:textSize="@dimen/movie_detail_paragraph_text_size"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="@string/ingredients_label" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <!--Horizontal Separator-->

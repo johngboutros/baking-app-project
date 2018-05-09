@@ -22,8 +22,8 @@ public class RecipeDetailsActivity extends AppCompatActivity {
 
     private static final String TAG = RecipeDetailsActivity.class.getSimpleName();
 
-    @BindView(R.id.recipe_details_scroll_sv)
-    ScrollView scrollView;
+//    @BindView(R.id.recipe_details_scroll_sv)
+//    ScrollView scrollView;
 
     // Movie Intent Extra param
     public static final String RECIPE_EXTRA_PARAM = "recipe";
@@ -127,9 +127,9 @@ public class RecipeDetailsActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        int scrollY = scrollView.getScrollY();
-        int maxScrollY = scrollView.getChildAt(0).getHeight();
-        outState.putFloat(SCROLL_STATE_BUNDLE_KEY, getScrollPercent(scrollY, maxScrollY));
+//        int scrollY = scrollView.getScrollY();
+//        int maxScrollY = scrollView.getChildAt(0).getHeight();
+//        outState.putFloat(SCROLL_STATE_BUNDLE_KEY, getScrollPercent(scrollY, maxScrollY));
     }
 
     @Override
