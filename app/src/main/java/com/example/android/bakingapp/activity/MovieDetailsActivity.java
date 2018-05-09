@@ -366,7 +366,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
                                 if (!reviewIterator.hasNext() || displayedCount == MAX_REVIEWS_COUNT) {
                                     // Setup last review & exit loop
                                     View separator = reviewItem
-                                            .findViewById(R.id.movie_detail_review_item_separator_v);
+                                            .findViewById(R.id.separator_v);
                                     separator.setVisibility(View.INVISIBLE);
 
                                     break;

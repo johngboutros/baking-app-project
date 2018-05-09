@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">BakingApp</string>
     <string name="recipes_load_error">Couldn\'t load recipes</string>
+    <string name="ingredients_label">Ingredients</string>
 
 
     <!-- OBSOLETE -->

@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -73,17 +74,23 @@ public class RecipeStepsAdapter extends AbstractAdapter<Recipe, RecipeStepsAdapt
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        View view = null;
+        ViewHolder viewHolder = null;
 
         if (viewType == ItemType.INGREDIENTS) {
-            view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_discovery, parent, false);
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.fragment_recipe_viewer_ingredients,
+                            parent, false);
+
+            return new IngredientsViewHolder(view);
+
+
         } else {
-            view = LayoutInflater.from(parent.getContext())
+            View view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_discovery, parent, false);
+
+            return new ViewHolder(view);
         }
 
-        return new ViewHolder(view);
     }
 
     /**
@@ -114,7 +121,8 @@ public class RecipeStepsAdapter extends AbstractAdapter<Recipe, RecipeStepsAdapt
         switch (itemType) {
             case ItemType.STEP:
 
-                Step step = steps.get(position + (ingredients != null ? 1 : 0));
+                // TODO replace with hasIngredients()
+                Step step = steps.get(position - (ingredients != null ? 1 : 0));
 
                 String title = step.getShortDescription();
 
@@ -124,22 +132,22 @@ public class RecipeStepsAdapter extends AbstractAdapter<Recipe, RecipeStepsAdapt
 
                 if (TextUtils.isEmpty(step.getThumbnailURL())) {
 
-                    holder.title.setText(title);
-                    holder.image.setImageDrawable(context.getResources()
-                            .getDrawable(R.drawable.bg_movie_thumb));
-
-                    holder.loading.setVisibility(View.GONE);
-                    holder.image.setVisibility(View.VISIBLE);
-                    holder.title.setVisibility(View.VISIBLE);
+//                    holder.title.setText(title);
+//                    holder.image.setImageDrawable(context.getResources()
+//                            .getDrawable(R.drawable.bg_movie_thumb));
+//
+//                    holder.loading.setVisibility(View.GONE);
+//                    holder.image.setVisibility(View.VISIBLE);
+//                    holder.title.setVisibility(View.VISIBLE);
 
                 } else {
-                    String posterURL = TMDbUtils.buildPosterURL(step.getThumbnailURL(), TMDbUtils.PosterSize.W185);
-
-                    Picasso.with(context).load(posterURL)
-                            .fit()
-                            .centerCrop()
-                            .placeholder(R.drawable.bg_movie_thumb)
-                            .into(holder.image);
+//                    String posterURL = TMDbUtils.buildPosterURL(step.getThumbnailURL(), TMDbUtils.PosterSize.W185);
+//
+//                    Picasso.with(context).load(posterURL)
+//                            .fit()
+//                            .centerCrop()
+//                            .placeholder(R.drawable.bg_movie_thumb)
+//                            .into(holder.image);
 
                     // DEBUG: using Picasso.Listener to detect load failure
                     //
@@ -157,11 +165,11 @@ public class RecipeStepsAdapter extends AbstractAdapter<Recipe, RecipeStepsAdapt
                     //                .placeholder(R.drawable.bg_movie_thumb)
                     //                .into(holder.image);
 
-                    holder.loading.setVisibility(View.GONE);
-                    holder.title.setVisibility(View.GONE);
-                    holder.image.setVisibility(View.VISIBLE);
-
-                    holder.image.setContentDescription(title);
+//                    holder.loading.setVisibility(View.GONE);
+//                    holder.title.setVisibility(View.GONE);
+//                    holder.image.setVisibility(View.VISIBLE);
+//
+//                    holder.image.setContentDescription(title);
                 }
 
 //                holder.image.setOnClickListener(new View.OnClickListener() {
@@ -176,10 +184,57 @@ public class RecipeStepsAdapter extends AbstractAdapter<Recipe, RecipeStepsAdapt
                 break;
 
             case ItemType.INGREDIENTS:
-                holder.image.setVisibility(View.GONE);
-                holder.title.setVisibility(View.GONE);
-                holder.loading.setVisibility(View.VISIBLE);
+
+                IngredientsViewHolder ingredientsHolder = (IngredientsViewHolder) holder;
+
+                for (Ingredient ingredient : ingredients) {
+
+                    View ingredientItem = getLayoutInflater()
+                            .inflate(R.layout.fragment_recipe_viewer_ingredients_item, null,
+                                    false);
+
+                    TextView quantityTv = ingredientItem.findViewById(R.id.quantity_tv);
+
+                    quantityTv.setText(ingredient.getQuantity() + " " + ingredient.getMeasure());
+
+                    TextView ingredientTv = ingredientItem.findViewById(R.id.ingredient_tv);
+
+                    ingredientTv.setText(ingredient.getIngredient());
+
+                    ingredientsHolder.container.addView(ingredientItem);
+                }
+
                 break;
+        }
+    }
+
+
+    /**
+     * Retrieves a LayoutInflater
+     *
+     * @return LayoutInflater
+     */
+    protected LayoutInflater getLayoutInflater() {
+        return (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    }
+
+    /**
+     * ViewHolder to display a discovery movie item
+     */
+    public class ViewHolder extends RecyclerView.ViewHolder {
+
+//        @BindView(R.id.discovery_item_image_iv)
+//        ImageView image;
+//
+//        @BindView(R.id.discovery_item_loading_pb)
+//        ProgressBar loading;
+//
+//        @BindView(R.id.discovery_item_title_tv)
+//        TextView title;
+
+        public ViewHolder(View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
         }
     }
 
@@ -187,18 +242,12 @@ public class RecipeStepsAdapter extends AbstractAdapter<Recipe, RecipeStepsAdapt
     /**
      * ViewHolder to display a discovery movie item
      */
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class IngredientsViewHolder extends ViewHolder {
 
-        @BindView(R.id.discovery_item_image_iv)
-        ImageView image;
+        @BindView(R.id.ingredients_container_ll)
+        LinearLayout container;
 
-        @BindView(R.id.discovery_item_loading_pb)
-        ProgressBar loading;
-
-        @BindView(R.id.discovery_item_title_tv)
-        TextView title;
-
-        public ViewHolder(View itemView) {
+        public IngredientsViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
@@ -269,9 +318,9 @@ public class RecipeStepsAdapter extends AbstractAdapter<Recipe, RecipeStepsAdapt
     public int getItemViewType(int position) {
 
         if (position == 0) {
-            return ItemType.STEP;
-        } else {
             return ItemType.INGREDIENTS;
+        } else {
+            return ItemType.STEP;
         }
     }
 
