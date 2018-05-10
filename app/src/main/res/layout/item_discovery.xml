@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/discovery_item_height"
         android:scaleType="centerCrop"
-        tools:src="@drawable/bg_movie_thumb">
+        tools:src="@drawable/bg_recipe_thumb">
 
     </ImageView>
 
@@ -24,7 +24,9 @@
         android:layout_marginStart="@dimen/discovery_item_image_text_margin"
         android:layout_marginTop="@dimen/discovery_item_image_text_margin_top"
         android:gravity="center"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@android:color/white"
+        android:textSize="32sp"
+        android:textStyle="bold"
         android:visibility="gone"
         tools:text="TextView Text Above ImageView" />
 

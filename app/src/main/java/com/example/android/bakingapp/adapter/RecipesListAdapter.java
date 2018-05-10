@@ -32,6 +32,8 @@ public class RecipesListAdapter extends AbstractAdapter<Recipe, RecipesListAdapt
 
     private static final String TAG = RecipesListAdapter.class.getSimpleName();
 
+    private static int ITEM_BACKGROUND_RES_ID = R.drawable.bg_recipe_thumb;
+
     // Discovered recipes list
     private List<Recipe> recipes = new ArrayList<Recipe>();
 
@@ -114,7 +116,7 @@ public class RecipesListAdapter extends AbstractAdapter<Recipe, RecipesListAdapt
 
                     holder.title.setText(title);
                     holder.image.setImageDrawable(context.getResources()
-                            .getDrawable(R.drawable.bg_movie_thumb));
+                            .getDrawable(ITEM_BACKGROUND_RES_ID));
 
                     holder.loading.setVisibility(View.GONE);
                     holder.image.setVisibility(View.VISIBLE);
@@ -126,7 +128,7 @@ public class RecipesListAdapter extends AbstractAdapter<Recipe, RecipesListAdapt
                     Picasso.with(context).load(posterURL)
                             .fit()
                             .centerCrop()
-                            .placeholder(R.drawable.bg_movie_thumb)
+                            .placeholder(ITEM_BACKGROUND_RES_ID)
                             .into(holder.image);
 
                     // DEBUG: using Picasso.Listener to detect load failure
@@ -142,7 +144,7 @@ public class RecipesListAdapter extends AbstractAdapter<Recipe, RecipesListAdapt
                     //        builder.build().load(movies.get(position).getPosterPath())
                     //                .fit()
                     //                .centerCrop()
-                    //                .placeholder(R.drawable.bg_movie_thumb)
+                    //                .placeholder(ITEM_BACKGROUND_RES_ID)
                     //                .into(holder.image);
 
                     holder.loading.setVisibility(View.GONE);
