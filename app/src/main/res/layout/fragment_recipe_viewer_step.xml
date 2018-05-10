@@ -16,7 +16,7 @@
         android:layout_marginEnd="@dimen/movie_detail_row_margin_h"
         android:layout_marginStart="@dimen/movie_detail_row_margin_h"
         android:gravity="start|center_vertical"
-        android:text="@string/ingredients_label"
+        tools:text="Step 1"
         android:textSize="@dimen/movie_detail_paragraph_text_size"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -35,14 +35,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/step_header_tv" />
 
-    <!--Ingredients Container-->
-    <LinearLayout
-        android:id="@+id/ingredients_container_ll"
-        android:layout_width="match_parent"
+    <!--Step content-->
+    <TextView
+        android:id="@+id/step_content_tv"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/separator_v" />
+        app:layout_constraintTop_toBottomOf="@id/separator_v"
+        tools:text="@tools:sample/lorem/random"/>
 
 </android.support.constraint.ConstraintLayout>

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.PagerAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import com.example.android.bakingapp.R;
 import com.example.android.bakingapp.data.Ingredient;
 import com.example.android.bakingapp.data.Recipe;
+import com.example.android.bakingapp.data.Step;
 
 import java.util.List;
 
@@ -21,6 +23,8 @@ import java.util.List;
  */
 
 public class RecipeStepsPagerAdapter extends PagerAdapter {
+
+    private final String TAG = RecipeStepsPagerAdapter.class.getSimpleName();
 
     // See:
     // https://www.bignerdranch.com/blog/viewpager-without-fragments/
@@ -49,16 +53,62 @@ public class RecipeStepsPagerAdapter extends PagerAdapter {
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
 
+        ViewGroup layout = null;
+        int stepPosition = position;
+
+        if (!hasIngredients()) {
+            if (!hasSteps()) {
+                Log.w(TAG, "Instantiating empty item");
+                // TODO Handle empty recipe
+                return null;
+            }
+        } else {
+            stepPosition--;
+        }
+
+        if (hasIngredients() && position == 0) {
+            // 1st Page is ingredients
+            layout = getIngredientsLayout(container);
+        } else {
+            // Step page
+            Step step = recipe.getSteps().get(stepPosition);
+            layout = getStepLayout(container, step);
+        }
+
         // TODO Select an ingredient page or step one based on position
+
+
+        container.addView(layout);
+        return layout;
+    }
+
+    private ViewGroup getIngredientsLayout(ViewGroup container) {
         int layoutResId = R.layout.fragment_recipe_viewer_ingredients;
 
         ViewGroup layout = (ViewGroup) inflater().inflate(layoutResId,
                 container, false);
 
+        // Setup ingredients layout
         LinearLayout ingredientsContainer = layout.findViewById(R.id.ingredients_container_ll);
         displayIngredients(ingredientsContainer, recipe.getIngredients());
 
-        container.addView(layout);
+        return layout;
+    }
+
+    private ViewGroup getStepLayout(ViewGroup container, Step step) {
+        int layoutResId = R.layout.fragment_recipe_viewer_step;
+
+        ViewGroup layout = (ViewGroup) inflater().inflate(layoutResId,
+                container, false);
+
+        // Setup step layout
+        // TODO handle nulls
+        TextView headerTv = layout.findViewById(R.id.step_header_tv);
+        headerTv.setText(step.getShortDescription());
+
+        TextView contentTv = layout.findViewById(R.id.step_content_tv);
+        contentTv.setText(step.getDescription());
+
         return layout;
     }
 
