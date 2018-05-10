@@ -22,9 +22,6 @@ public class RecipeDetailsActivity extends AppCompatActivity {
 
     private static final String TAG = RecipeDetailsActivity.class.getSimpleName();
 
-//    @BindView(R.id.recipe_details_scroll_sv)
-//    ScrollView scrollView;
-
     // Movie Intent Extra param
     public static final String RECIPE_EXTRA_PARAM = "recipe";
 

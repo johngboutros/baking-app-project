@@ -23,6 +23,7 @@ import java.util.List;
 public class RecipeStepsPagerAdapter extends PagerAdapter {
 
     // See:
+    // https://www.bignerdranch.com/blog/viewpager-without-fragments/
     // https://www.journaldev.com/10096/android-viewpager-example-tutorial
 
     private Context context;
@@ -82,10 +83,6 @@ public class RecipeStepsPagerAdapter extends PagerAdapter {
     }
 
     private LayoutInflater inflater() {
-        return LayoutInflater.from(context);
-    }
-
-    private LayoutInflater inflater(Context context) {
         return LayoutInflater.from(context);
     }
 

@@ -24,7 +24,7 @@
 
     <TextView
         android:id="@+id/ingredient_tv"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/movie_detail_row_margin_h"
         android:layout_marginStart="@dimen/movie_detail_row_margin_h"
