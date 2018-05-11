@@ -4,10 +4,12 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.PagerAdapter;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -15,6 +17,7 @@ import com.example.android.bakingapp.R;
 import com.example.android.bakingapp.data.Ingredient;
 import com.example.android.bakingapp.data.Recipe;
 import com.example.android.bakingapp.data.Step;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -95,6 +98,13 @@ public class RecipeStepsPagerAdapter extends PagerAdapter {
         return layout;
     }
 
+    /**
+     * Sets up the layout for the given step and returns a view that represent it.
+     *
+     * @param container the layout container
+     * @param step the given step to render
+     * @return view represents the layout for the given step
+     */
     private ViewGroup getStepLayout(ViewGroup container, Step step) {
         int layoutResId = R.layout.fragment_recipe_viewer_step;
 
@@ -105,6 +115,18 @@ public class RecipeStepsPagerAdapter extends PagerAdapter {
         // TODO handle nulls
         TextView headerTv = layout.findViewById(R.id.step_header_tv);
         headerTv.setText(step.getShortDescription());
+
+        ImageView thumbnailIv = layout.findViewById(R.id.step_thumbnail_iv);
+        if (!TextUtils.isEmpty(step.getThumbnailURL())) {
+            thumbnailIv.setVisibility(View.VISIBLE);
+            Picasso.with(context).load(step.getThumbnailURL())
+                    .fit()
+                    .centerCrop()
+                    .placeholder(R.drawable.bg_movie_thumb)
+                    .into(thumbnailIv);
+        } else {
+            thumbnailIv.setVisibility(View.GONE);
+        }
 
         TextView contentTv = layout.findViewById(R.id.step_content_tv);
         contentTv.setText(step.getDescription());
