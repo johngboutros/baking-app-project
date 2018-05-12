@@ -16,12 +16,12 @@
         android:layout_marginEnd="@dimen/movie_detail_row_margin_h"
         android:layout_marginStart="@dimen/movie_detail_row_margin_h"
         android:gravity="start|center_vertical"
-        tools:text="Step 1"
         android:textSize="@dimen/movie_detail_paragraph_text_size"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Step 1" />
 
 
     <!--Horizontal Separator-->
@@ -43,23 +43,31 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/separator_v"
-        android:visibility="gone"/>
+        app:layout_constraintTop_toTopOf="@+id/separator_v" />
 
-    <!--TODO Add player-->
+    <!--Step player-->
+    <com.google.android.exoplayer2.ui.PlayerView
+        android:id="@+id/step_video_pv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/step_thumbnail_iv" />
 
     <!--Step content-->
     <TextView
-    android:id="@+id/step_content_tv"
-    android:layout_width="0dp"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="8dp"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintHorizontal_bias="0.0"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@+id/step_thumbnail_iv"
-    tools:text="@tools:sample/lorem/random" />
+        android:id="@+id/step_content_tv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/step_video_pv"
+        tools:text="@tools:sample/lorem/random" />
 
 </android.support.constraint.ConstraintLayout>

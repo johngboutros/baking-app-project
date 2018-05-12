@@ -1,6 +1,7 @@
 package com.example.android.bakingapp.adapter;
 
 import android.content.Context;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.PagerAdapter;
@@ -17,9 +18,19 @@ import com.example.android.bakingapp.R;
 import com.example.android.bakingapp.data.Ingredient;
 import com.example.android.bakingapp.data.Recipe;
 import com.example.android.bakingapp.data.Step;
+import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.util.Util;
 import com.squareup.picasso.Picasso;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by john on 09/05/18.
@@ -35,6 +46,9 @@ public class RecipeStepsPagerAdapter extends PagerAdapter {
 
     private Context context;
     private Recipe recipe;
+
+    private Map<Integer, ExoPlayer> exoPlayers = new HashMap<>();
+//    private ExoPlayer exoPlayer;
 
     public RecipeStepsPagerAdapter(@NonNull Context context, @NonNull Recipe recipe) {
         this.context = context;
@@ -69,6 +83,10 @@ public class RecipeStepsPagerAdapter extends PagerAdapter {
             stepPosition--;
         }
 
+        //TODO useful?
+//        destroyPlayer();
+
+        // Select an ingredient page or step one based on position
         if (hasIngredients() && position == 0) {
             // 1st Page is ingredients
             layout = getIngredientsLayout(container);
@@ -77,9 +95,6 @@ public class RecipeStepsPagerAdapter extends PagerAdapter {
             Step step = recipe.getSteps().get(stepPosition);
             layout = getStepLayout(container, step);
         }
-
-        // TODO Select an ingredient page or step one based on position
-
 
         container.addView(layout);
         return layout;
@@ -128,10 +143,54 @@ public class RecipeStepsPagerAdapter extends PagerAdapter {
             thumbnailIv.setVisibility(View.GONE);
         }
 
+        PlayerView playerView = layout.findViewById(R.id.step_video_pv);
+        if (!TextUtils.isEmpty(step.getVideoURL())) {
+            // TODO Setup player
+            playerView.setVisibility(View.VISIBLE);
+            setupPlayer(playerView, step.getId(), step.getVideoURL());
+        } else {
+            // TODO Hide player
+            playerView.setVisibility(View.GONE);
+        }
+
         TextView contentTv = layout.findViewById(R.id.step_content_tv);
         contentTv.setText(step.getDescription());
 
         return layout;
+    }
+
+    private void setupPlayer(PlayerView playerView, int stepId, String videoURL) {
+//        ExoPlayer exoPlayer = this.exoPlayer;
+        ExoPlayer exoPlayer = exoPlayers.get(stepId);
+        if (exoPlayer == null) {
+            exoPlayer = ExoPlayerFactory
+                    .newSimpleInstance(context, new DefaultTrackSelector());
+            exoPlayers.put(stepId, exoPlayer);
+//            this.exoPlayer = exoPlayer;
+        }
+
+        playerView.setPlayer(exoPlayer);
+
+        Uri uri = Uri.parse(videoURL);
+
+        String userAgent = Util.getUserAgent(context, context.getString(R.string.app_name));
+        MediaSource mediaSource = new ExtractorMediaSource
+                .Factory(new DefaultDataSourceFactory(context, userAgent))
+                .createMediaSource(uri);
+        exoPlayer.prepare(mediaSource);
+//        exoPlayer.setPlayWhenReady(true);
+    }
+
+    private void destroyPlayer(int stepId) {
+//        ExoPlayer exoPlayer = this.exoPlayer;
+        ExoPlayer exoPlayer = exoPlayers.get(stepId);
+        if (exoPlayer != null) {
+            // TODO Destroy player
+            exoPlayer.stop();
+            exoPlayer.release();
+            exoPlayers.remove(stepId);
+//            this.exoPlayer = null;
+        }
     }
 
     private void displayIngredients(ViewGroup container, List<Ingredient> ingredients) {
@@ -170,6 +229,17 @@ public class RecipeStepsPagerAdapter extends PagerAdapter {
      */
     @Override
     public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
+        int stepId = -1;
+
+        if (hasIngredients() && position > 0) {
+            stepId = recipe.getSteps().get(--position).getId();
+        } else {
+            stepId = recipe.getSteps().get(position).getId();
+        }
+
+        destroyPlayer(stepId);
+        PlayerView playerView = container.findViewById(R.id.step_video_pv);
+        playerView.setVisibility(View.GONE);
         container.removeView((View) object);
     }
 
