@@ -104,8 +104,12 @@ public class DiscoveryActivity extends AppCompatActivity {
                 @Override
                 public void onClick(Recipe recipe) {
                     // TODO launch RecipeDetail Activity
+//                    Intent intent = new Intent(DiscoveryActivity.this,
+//                            RecipeDetailsActivity.class);
+//                    intent.putExtra(RecipeDetailsActivity.RECIPE_EXTRA_PARAM, Parcels.wrap(recipe));
+
                     Intent intent = new Intent(DiscoveryActivity.this,
-                            RecipeDetailsActivity.class);
+                            StepListActivity.class);
                     intent.putExtra(RecipeDetailsActivity.RECIPE_EXTRA_PARAM, Parcels.wrap(recipe));
 
                     startActivity(intent);
