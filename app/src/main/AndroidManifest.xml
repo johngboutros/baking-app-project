@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".activity.DiscoveryActivity"
+            android:name=".activity.MainActivity"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -20,18 +20,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".activity.RecipeDetailsActivity"
-            android:parentActivityName=".activity.DiscoveryActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.android.bakingapp.activity.DiscoveryActivity" />
-        </activity>
-
-        <provider
-            android:name=".data.MoviesProvider"
-            android:authorities="com.example.android.bakingapp.data.provider"
-            android:exported="false" />
 
         <activity
             android:name=".activity.StepListActivity"

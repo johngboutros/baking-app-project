@@ -30,9 +30,9 @@ import butterknife.BindInt;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class DiscoveryActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity {
 
-    private static final String TAG = DiscoveryActivity.class.getSimpleName();
+    private static final String TAG = MainActivity.class.getSimpleName();
 
     /**
      * Available sort options provided by the adapter
@@ -103,14 +103,10 @@ public class DiscoveryActivity extends AppCompatActivity {
             itemClickListener = new AbstractAdapter.ItemClickListener<Recipe>() {
                 @Override
                 public void onClick(Recipe recipe) {
-                    // TODO launch RecipeDetail Activity
-//                    Intent intent = new Intent(DiscoveryActivity.this,
-//                            RecipeDetailsActivity.class);
-//                    intent.putExtra(RecipeDetailsActivity.RECIPE_EXTRA_PARAM, Parcels.wrap(recipe));
 
-                    Intent intent = new Intent(DiscoveryActivity.this,
+                    Intent intent = new Intent(MainActivity.this,
                             StepListActivity.class);
-                    intent.putExtra(RecipeDetailsActivity.RECIPE_EXTRA_PARAM, Parcels.wrap(recipe));
+                    intent.putExtra(StepListActivity.RECIPE_EXTRA_PARAM, Parcels.wrap(recipe));
 
                     startActivity(intent);
                 }
@@ -176,13 +172,13 @@ public class DiscoveryActivity extends AppCompatActivity {
                             recipesAdapter.stopLoading();
                         }
 
-                        Toast.makeText(DiscoveryActivity.this,
+                        Toast.makeText(MainActivity.this,
                                 getString(R.string.recipes_load_error), Toast.LENGTH_LONG).show();
                         Log.e(TAG, "VolleyError: " + error.getMessage());
                     }
                 });
 
-        NetworkUtils.get(DiscoveryActivity.this).addToRequestQueue(recipesRequest);
+        NetworkUtils.get(MainActivity.this).addToRequestQueue(recipesRequest);
     }
 
     private void setupRecipesAdapter() {

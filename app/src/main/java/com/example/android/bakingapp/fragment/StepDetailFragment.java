@@ -18,15 +18,12 @@ import com.example.android.bakingapp.activity.StepDetailActivity;
 import com.example.android.bakingapp.activity.StepListActivity;
 import com.example.android.bakingapp.data.Ingredient;
 import com.example.android.bakingapp.data.Step;
-import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.Timeline;
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
@@ -127,7 +124,7 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
     }
 
     private ViewGroup getIngredientsLayout(LayoutInflater inflater, ViewGroup container, List<Ingredient> ingredients) {
-        int layoutResId = R.layout.fragment_recipe_viewer_ingredients;
+        int layoutResId = R.layout.fragment_step_detail_ingredients;
 
         ViewGroup layout = (ViewGroup) inflater.inflate(layoutResId,
                 container, false);
@@ -148,7 +145,7 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
      */
     private ViewGroup getStepLayout(LayoutInflater inflater, ViewGroup container, Step step) {
 
-        ViewGroup layout = (ViewGroup) inflater.inflate(R.layout.fragment_recipe_viewer_step,
+        ViewGroup layout = (ViewGroup) inflater.inflate(R.layout.fragment_step_detail_step,
                 container, false);
 
         // Setup step layout
@@ -222,7 +219,7 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
         for (Ingredient ingredient : ingredients) {
 
             View ingredientItem = inflater
-                    .inflate(R.layout.fragment_recipe_viewer_ingredients_item, container,
+                    .inflate(R.layout.fragment_step_detail_ingredients_item, container,
                             false);
 
             TextView quantityTv = ingredientItem.findViewById(R.id.quantity_tv);

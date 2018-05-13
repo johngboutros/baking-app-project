@@ -15,7 +15,6 @@ import android.widget.TextView;
 
 import com.example.android.bakingapp.R;
 import com.example.android.bakingapp.data.Recipe;
-import com.example.android.bakingapp.utilities.TMDbUtils;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -99,7 +98,7 @@ public class RecipesListAdapter extends AbstractAdapter<Recipe, RecipesListAdapt
 
         final Recipe recipe = getItem(position);
 
-        String posterPath = recipe.getImage();
+        String recipeImageUrl = recipe.getImage();
 
 
         ItemType itemType = getItemType(position);
@@ -123,9 +122,7 @@ public class RecipesListAdapter extends AbstractAdapter<Recipe, RecipesListAdapt
                     holder.title.setVisibility(View.VISIBLE);
 
                 } else {
-                    String posterURL = TMDbUtils.buildPosterURL(posterPath, TMDbUtils.PosterSize.W185);
-
-                    Picasso.with(context).load(posterURL)
+                    Picasso.with(context).load(recipeImageUrl)
                             .fit()
                             .centerCrop()
                             .placeholder(ITEM_BACKGROUND_RES_ID)

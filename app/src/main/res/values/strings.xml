@@ -3,27 +3,7 @@
     <string name="recipes_load_error">Couldn\'t load recipes</string>
     <string name="ingredients_label">Ingredients</string>
 
-
-    <!-- OBSOLETE -->
-
-    <!-- Movie Details -->
-    <string name="movie_detail_rate_format">%.1f/10</string>
-    <string name="movie_detail_unrated">Unrated</string>
-    <string name="movie_detail_trailers_label">Trailers:</string>
-    <string name="movie_detail_video_not_supported">Video not supported</string>
-    <string name="movie_detail_reviews_label">Reviews:</string>
-    <string name="movie_detail_reviews_unknown_author">Anonymous</string>
-    <string name="movie_detail_favorite_button">Add to\nfavorites</string>
-    <string name="movie_detail_favorite_button_added">Favorite</string>
-    <string name="movie_detail_load_trailers_error">Couldn\'t load trailers</string>
-    <string name="movie_detail_load_reviews_error">Couldn\'t load reviews</string>
-    <string name="movie_detail_favorite_added">%s added to favorites</string>
-    <string name="movie_detail_favorite_removed">%s removed from favorites</string>
-    <string name="movie_detail_share_button">Share</string>
-    <string name="movie_detail_share_chooser_title">How would you like to share this?</string>
-
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_step_list">Steps</string>
     <string name="title_step_detail">Step Detail</string>
 
