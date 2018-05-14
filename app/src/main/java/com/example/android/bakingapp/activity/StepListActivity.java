@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -78,6 +79,12 @@ public class StepListActivity extends AppCompatActivity {
         View recyclerView = findViewById(R.id.step_list);
         assert recyclerView != null;
         setupRecyclerView((RecyclerView) recyclerView);
+
+        if (savedInstanceState != null) {
+            // TODO restore saved instance
+        } else {
+            startIngredientsFragment(this, recipe.getIngredients());
+        }
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
@@ -104,29 +111,26 @@ public class StepListActivity extends AppCompatActivity {
                 }
 
                 if (mTwoPane) {
-                    Bundle arguments = new Bundle();
 
                     if (step != null) {
-                        arguments.putParcelable(StepDetailFragment.ARG_STEP, Parcels.wrap(step));
+                        startStepFragment(mParentActivity, step);
+                    } else if (ingredients != null) {
+                        startIngredientsFragment(mParentActivity, ingredients);
                     } else {
-                        arguments.putParcelable(StepDetailFragment.ARG_INGREDIENTS,
-                                Parcels.wrap(ingredients));
+                        // TODO handle empty recipe
                     }
 
-                    StepDetailFragment fragment = new StepDetailFragment();
-                    fragment.setArguments(arguments);
-                    mParentActivity.getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.step_detail_container, fragment)
-                            .commit();
                 } else {
                     Context context = view.getContext();
                     Intent intent = new Intent(context, StepDetailActivity.class);
 
                     if (step != null) {
                         intent.putExtra(StepDetailFragment.ARG_STEP, Parcels.wrap(step));
-                    } else {
+                    } else if (ingredients != null) {
                         intent.putExtra(StepDetailFragment.ARG_INGREDIENTS,
                                 Parcels.wrap(ingredients));
+                    } else {
+                        // TODO handle empty recipe
                     }
 
                     context.startActivity(intent);
@@ -208,5 +212,30 @@ public class StepListActivity extends AppCompatActivity {
         private boolean hasSteps() {
             return mRecipe.getSteps() != null && mRecipe.getSteps().size() > 0;
         }
+    }
+
+    private static void startStepFragment(FragmentActivity activity, Step step) {
+
+        Bundle arguments = new Bundle();
+        arguments.putParcelable(StepDetailFragment.ARG_STEP, Parcels.wrap(step));
+
+        startDetailFragment(activity, arguments);
+    }
+
+    private static void startIngredientsFragment(FragmentActivity activity,
+                                                 List<Ingredient> ingredients) {
+
+        Bundle arguments = new Bundle();
+        arguments.putParcelable(StepDetailFragment.ARG_INGREDIENTS, Parcels.wrap(ingredients));
+
+        startDetailFragment(activity, arguments);
+    }
+
+    private static void startDetailFragment(FragmentActivity activity, Bundle arguments) {
+        StepDetailFragment fragment = new StepDetailFragment();
+        fragment.setArguments(arguments);
+        activity.getSupportFragmentManager().beginTransaction()
+                .replace(R.id.step_detail_container, fragment)
+                .commit();
     }
 }
