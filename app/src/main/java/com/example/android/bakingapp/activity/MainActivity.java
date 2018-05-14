@@ -3,6 +3,10 @@ package com.example.android.bakingapp.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
+import android.support.test.espresso.IdlingResource;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,6 +20,7 @@ import com.example.android.bakingapp.R;
 import com.example.android.bakingapp.adapter.AbstractAdapter;
 import com.example.android.bakingapp.adapter.RecipesListAdapter;
 import com.example.android.bakingapp.data.Recipe;
+import com.example.android.bakingapp.idlingResource.SimpleIdlingResource;
 import com.example.android.bakingapp.utilities.GsonRequest;
 import com.example.android.bakingapp.utilities.NetworkUtils;
 
@@ -34,17 +39,13 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    /**
-     * Available sort options provided by the adapter
-     */
-    public enum SortOption {
-        POPULARITY, TOP_RATED, RELEASE_DATE, REVENUE, FAVORITES
-    }
+    // SimpleIdlingResource variable that will be null in production
+    @Nullable
+    private SimpleIdlingResource mIdlingResource;
 
-    @BindView(R.id.discovery_list_rv)
+    @BindView(R.id.recipe_list_rv)
     RecyclerView recyclerView;
 
-    // TODO Chnage columns number
     @BindInt(R.integer.discovery_grid_columns)
     int gridColumns;
 
@@ -66,7 +67,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // TODO Change layout
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
@@ -78,9 +78,12 @@ public class MainActivity extends AppCompatActivity {
 
         if (savedInstanceState != null) {
             restoreInstanceState(savedInstanceState);
-        } else {
-            loadBakingRecipes();
         }
+
+        // Initialize the IdlingResource
+        getIdlingResource();
+
+        loadBakingRecipes();
     }
 
     @Override
@@ -103,6 +106,8 @@ public class MainActivity extends AppCompatActivity {
             itemClickListener = new AbstractAdapter.ItemClickListener<Recipe>() {
                 @Override
                 public void onClick(Recipe recipe) {
+
+//                    setIdlingResource(false);
 
                     Intent intent = new Intent(MainActivity.this,
                             StepListActivity.class);
@@ -138,6 +143,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (!isLoading) {
             isLoading = true;
+            setIdlingResource(!isLoading);
             recipesAdapter.startLoading();
         }
 
@@ -159,7 +165,9 @@ public class MainActivity extends AppCompatActivity {
                         }
                         Log.d(TAG, "Recipes: " + recipes);
 
+                        recipesAdapter.clear();
                         recipesAdapter.addAll(Arrays.asList(recipes));
+                        setIdlingResource(!isLoading);
 
                     }
                 },
@@ -169,6 +177,7 @@ public class MainActivity extends AppCompatActivity {
 
                         if (isLoading) {
                             isLoading = false;
+                            setIdlingResource(!isLoading);
                             recipesAdapter.stopLoading();
                         }
 
@@ -227,6 +236,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+//        setIdlingResource(true);
+    }
+
     /**
      * A class to save the adapter's state
      */
@@ -236,4 +251,22 @@ public class MainActivity extends AppCompatActivity {
         List<Recipe> recipes = new ArrayList<Recipe>();
     }
 
+    /**
+     * A method that returns the IdlingResource variable. It will
+     * instantiate a new instance of SimpleIdlingResource if the IdlingResource is null.
+     * This method will only be called from test.
+     */
+    @VisibleForTesting
+    @NonNull
+    public IdlingResource getIdlingResource() {
+        if (mIdlingResource == null) {
+            mIdlingResource = new SimpleIdlingResource();
+        }
+        return mIdlingResource;
+    }
+
+    private void setIdlingResource(boolean idle) {
+        if (mIdlingResource == null) return;
+        mIdlingResource.setIdleState(idle);
+    }
 }

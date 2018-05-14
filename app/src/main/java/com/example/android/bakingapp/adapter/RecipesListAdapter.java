@@ -68,7 +68,7 @@ public class RecipesListAdapter extends AbstractAdapter<Recipe, RecipesListAdapt
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_discovery, parent, false);
+                .inflate(R.layout.item_recipe, parent, false);
 
         return new ViewHolder(view);
     }
@@ -176,13 +176,13 @@ public class RecipesListAdapter extends AbstractAdapter<Recipe, RecipesListAdapt
      */
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.discovery_item_image_iv)
+        @BindView(R.id.recipe_image_iv)
         ImageView image;
 
-        @BindView(R.id.discovery_item_loading_pb)
+        @BindView(R.id.recipe_loading_pb)
         ProgressBar loading;
 
-        @BindView(R.id.discovery_item_title_tv)
+        @BindView(R.id.recipe_title_tv)
         TextView title;
 
         public ViewHolder(View itemView) {

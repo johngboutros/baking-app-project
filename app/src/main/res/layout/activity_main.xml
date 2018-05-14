@@ -7,7 +7,7 @@
     tools:context="com.example.android.bakingapp.activity.MainActivity">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/discovery_list_rv"
+        android:id="@+id/recipe_list_rv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="vertical" >
