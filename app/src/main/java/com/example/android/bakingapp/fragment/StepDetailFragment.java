@@ -45,7 +45,7 @@ import java.util.List;
  * in two-pane mode (on tablets) or a {@link StepDetailActivity}
  * on handsets.
  */
-public class StepDetailFragment extends Fragment implements ExoPlayer.EventListener {
+public class StepDetailFragment extends Fragment implements Player.EventListener {
     /**
      * The fragment arguments representing a step (or ingredients) that this fragment
      * represents.
@@ -224,7 +224,9 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
 
             TextView quantityTv = ingredientItem.findViewById(R.id.quantity_tv);
 
-            quantityTv.setText(ingredient.getQuantity() + " " + ingredient.getMeasure());
+            String formattedQuantity = String.format(getString(R.string.ingredient_quantity_template),
+                    String.valueOf(ingredient.getQuantity()), ingredient.getMeasure());
+            quantityTv.setText(formattedQuantity);
 
             TextView ingredientTv = ingredientItem.findViewById(R.id.ingredient_tv);
 

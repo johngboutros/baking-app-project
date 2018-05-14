@@ -2,6 +2,8 @@
     <string name="app_name">BakingApp</string>
     <string name="recipes_load_error">Couldn\'t load recipes</string>
     <string name="ingredients_label">Ingredients</string>
+    <string name="recipe_summary_template">Ingredients: %s</string>
+    <string name="ingredient_quantity_template">%s %s</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="title_step_list">Steps</string>

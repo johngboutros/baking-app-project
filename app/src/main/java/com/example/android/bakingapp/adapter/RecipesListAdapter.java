@@ -2,6 +2,7 @@ package com.example.android.bakingapp.adapter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -108,18 +109,20 @@ public class RecipesListAdapter extends AbstractAdapter<Recipe, RecipesListAdapt
                 String title = recipe.getName();
 
                 if (TextUtils.isEmpty(title)) {
-                    title = "UNTITLED";
+                    title = "Untitled Recipe";
                 }
 
                 if (TextUtils.isEmpty(recipe.getImage())) {
 
                     holder.title.setText(title);
+                    holder.summary.setText(getSummary(recipe));
                     holder.image.setImageDrawable(context.getResources()
                             .getDrawable(ITEM_BACKGROUND_RES_ID));
 
                     holder.loading.setVisibility(View.GONE);
                     holder.image.setVisibility(View.VISIBLE);
                     holder.title.setVisibility(View.VISIBLE);
+                    holder.summary.setVisibility(View.VISIBLE);
 
                 } else {
                     Picasso.with(context).load(recipeImageUrl)
@@ -146,12 +149,13 @@ public class RecipesListAdapter extends AbstractAdapter<Recipe, RecipesListAdapt
 
                     holder.loading.setVisibility(View.GONE);
                     holder.title.setVisibility(View.GONE);
+                    holder.summary.setVisibility(View.GONE);
                     holder.image.setVisibility(View.VISIBLE);
 
                     holder.image.setContentDescription(title);
                 }
 
-                holder.image.setOnClickListener(new View.OnClickListener() {
+                holder.card.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         for (ItemClickListener listener : getItemClickListeners()) {
@@ -165,9 +169,25 @@ public class RecipesListAdapter extends AbstractAdapter<Recipe, RecipesListAdapt
             case LOADING_ITEM:
                 holder.image.setVisibility(View.GONE);
                 holder.title.setVisibility(View.GONE);
+                holder.summary.setVisibility(View.GONE);
                 holder.loading.setVisibility(View.VISIBLE);
                 break;
         }
+    }
+
+    private String getSummary(Recipe recipe) {
+        StringBuilder builder = new StringBuilder();
+
+        if (recipe.getIngredients() != null && recipe.getIngredients().size() > 0) {
+            for (int i = 0; i<recipe.getIngredients().size(); i++) {
+                if (i > 0) {
+                    builder.append(", ");
+                }
+                builder.append(recipe.getIngredients().get(i).getIngredient());
+            }
+        }
+
+        return String.format(context.getString(R.string.recipe_summary_template), builder.toString());
     }
 
 
@@ -175,6 +195,9 @@ public class RecipesListAdapter extends AbstractAdapter<Recipe, RecipesListAdapt
      * ViewHolder to display a discovery movie item
      */
     public class ViewHolder extends RecyclerView.ViewHolder {
+
+        @BindView(R.id.recipe_card_cv)
+        CardView card;
 
         @BindView(R.id.recipe_image_iv)
         ImageView image;
@@ -184,6 +207,9 @@ public class RecipesListAdapter extends AbstractAdapter<Recipe, RecipesListAdapt
 
         @BindView(R.id.recipe_title_tv)
         TextView title;
+
+        @BindView(R.id.recipe_summary_tv)
+        TextView summary;
 
         public ViewHolder(View itemView) {
             super(itemView);

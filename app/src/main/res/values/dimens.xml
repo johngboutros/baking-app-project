@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="discovery_item_height">277dp</dimen>
+
+    <!--MainActivity-->
+    <dimen name="recipe_image_height">77dp</dimen>
+    <dimen name="recipe_title_margin">4dp</dimen>
+    <dimen name="recipe_title_text_size">32sp</dimen>
+    <dimen name="recipe_title_summary_size">16sp</dimen>
+
+
+    <!--RENAME-->
     <dimen name="discovery_item_loading_height">70dp</dimen>
     <dimen name="discovery_item_loading_margin">8dp</dimen>
     <dimen name="discovery_item_image_text_margin">4dp</dimen>
