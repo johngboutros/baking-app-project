@@ -83,7 +83,9 @@ public class StepListActivity extends AppCompatActivity {
         if (savedInstanceState != null) {
             // TODO restore saved instance
         } else {
-            startIngredientsFragment(this, recipe.getIngredients());
+            if (mTwoPane) {
+                startIngredientsFragment(this, recipe.getIngredients());
+            }
         }
     }
 
