@@ -2,6 +2,7 @@ package com.example.android.bakingapp.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
@@ -56,11 +57,16 @@ public class StepDetailActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
+
+            Parcelable stepArgument = getIntent().getParcelableExtra(StepDetailFragment.ARG_STEP);
+            Parcelable ingredientsArguments = getIntent()
+                    .getParcelableExtra(StepDetailFragment.ARG_INGREDIENTS);
             Bundle arguments = new Bundle();
-            arguments.putParcelable(StepDetailFragment.ARG_STEP,
-                    getIntent().getParcelableExtra(StepDetailFragment.ARG_STEP));
-            arguments.putParcelable(StepDetailFragment.ARG_INGREDIENTS,
-                    getIntent().getParcelableExtra(StepDetailFragment.ARG_INGREDIENTS));
+            if (stepArgument != null) {
+                arguments.putParcelable(StepDetailFragment.ARG_STEP, stepArgument);
+            } else if (ingredientsArguments != null) {
+                arguments.putParcelable(StepDetailFragment.ARG_INGREDIENTS, ingredientsArguments);
+            }
             StepDetailFragment fragment = new StepDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
