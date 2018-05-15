@@ -63,7 +63,7 @@
     <com.google.android.exoplayer2.ui.PlayerView
         android:id="@+id/step_video_pv"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/step_player_height"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

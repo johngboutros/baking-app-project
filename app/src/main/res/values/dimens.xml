@@ -6,6 +6,7 @@
     <dimen name="recipe_title_margin">4dp</dimen>
     <dimen name="recipe_title_text_size">32sp</dimen>
     <dimen name="recipe_title_summary_size">16sp</dimen>
+    <dimen name="step_player_height">220dp</dimen>
 
 
     <!--RENAME-->
