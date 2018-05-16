@@ -20,27 +20,31 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".activity.StepListActivity"
-            android:launchMode="singleTop"
             android:label="@string/title_step_list"
+            android:launchMode="singleTop"
             android:parentActivityName=".activity.MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.android.bakingapp.activity.MainActivity" />
         </activity>
-
         <activity
             android:name=".activity.StepDetailActivity"
             android:label="@string/title_step_detail"
+            android:launchMode="singleTop"
             android:parentActivityName=".activity.StepListActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.android.bakingapp.activity.StepListActivity" />
         </activity>
+        <activity
+            android:name=".activity.VideoActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_video"
+            android:theme="@style/FullscreenTheme"></activity>
     </application>
 
 </manifest>

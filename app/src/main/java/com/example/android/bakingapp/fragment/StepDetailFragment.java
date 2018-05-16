@@ -1,6 +1,8 @@
 package com.example.android.bakingapp.fragment;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -16,6 +18,7 @@ import android.widget.TextView;
 import com.example.android.bakingapp.R;
 import com.example.android.bakingapp.activity.StepDetailActivity;
 import com.example.android.bakingapp.activity.StepListActivity;
+import com.example.android.bakingapp.activity.VideoActivity;
 import com.example.android.bakingapp.data.Ingredient;
 import com.example.android.bakingapp.data.Step;
 import com.google.android.exoplayer2.ExoPlaybackException;
@@ -85,6 +88,11 @@ public class StepDetailFragment extends Fragment implements Player.EventListener
             // to load content from a content provider.
             mStep = Parcels.unwrap(getArguments().getParcelable(ARG_STEP));
             title = mStep.getShortDescription();
+            // Start video in fullscreen IF exists AND landscape
+            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE
+                    && !TextUtils.isEmpty(mStep.getVideoURL())) {
+                goFullscreenVideo(mStep.getVideoURL());
+            }
         } else if (getArguments().containsKey(ARG_INGREDIENTS)) {
             mIngredients = Parcels.unwrap(getArguments().getParcelable(ARG_INGREDIENTS));
             title = getString(R.string.ingredients_label);
@@ -95,6 +103,17 @@ public class StepDetailFragment extends Fragment implements Player.EventListener
         if (appBarLayout != null) {
             appBarLayout.setTitle(title);
         }
+    }
+
+    /**
+     * Starts video in full screen.
+     *
+     * @param videoUrl
+     */
+    private void goFullscreenVideo(String videoUrl) {
+        Intent i = new Intent(getContext(), VideoActivity.class);
+        i.putExtra(VideoActivity.ARG_VIDEO_URL, videoUrl);
+        getActivity().startActivity(i);
     }
 
     @Override
