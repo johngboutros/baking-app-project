@@ -88,10 +88,12 @@ public class StepDetailFragment extends Fragment implements Player.EventListener
             // to load content from a content provider.
             mStep = Parcels.unwrap(getArguments().getParcelable(ARG_STEP));
             title = mStep.getShortDescription();
-            // Start video in fullscreen IF exists AND landscape
-            // TODO Fix in tablet
+
+            boolean twoPane = getActivity().findViewById(R.id.step_list) != null;
+
+            // Start video in fullscreen IF exists AND landscape AND phone-mode
             if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE
-                    && !TextUtils.isEmpty(mStep.getVideoURL())) {
+                   && !twoPane && !TextUtils.isEmpty(mStep.getVideoURL())) {
                 goFullscreenVideo(mStep.getVideoURL());
             }
         } else if (getArguments().containsKey(ARG_INGREDIENTS)) {
