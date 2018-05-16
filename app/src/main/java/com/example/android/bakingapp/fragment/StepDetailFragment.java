@@ -89,6 +89,7 @@ public class StepDetailFragment extends Fragment implements Player.EventListener
             mStep = Parcels.unwrap(getArguments().getParcelable(ARG_STEP));
             title = mStep.getShortDescription();
             // Start video in fullscreen IF exists AND landscape
+            // TODO Fix in tablet
             if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE
                     && !TextUtils.isEmpty(mStep.getVideoURL())) {
                 goFullscreenVideo(mStep.getVideoURL());
