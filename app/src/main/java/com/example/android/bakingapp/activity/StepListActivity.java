@@ -75,6 +75,9 @@ public class StepListActivity extends AppCompatActivity {
             this.recipe = Parcels.unwrap(getIntent().getParcelableExtra(RECIPE_EXTRA_PARAM));
         }
 
+        // Set title
+        setTitle(this.recipe.getName());
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle(getTitle());
@@ -214,14 +217,15 @@ public class StepListActivity extends AppCompatActivity {
                 // 1st Page is ingredients
                 text = mParentActivity.getString(R.string.ingredients_label);
                 holder.itemView.setTag(mRecipe.getIngredients());
+                holder.mIdView.setText("*");
             } else {
                 // Step page
                 Step step = mRecipe.getSteps().get(stepPosition);
                 text = step.getShortDescription();
                 holder.itemView.setTag(mRecipe.getSteps().get(stepPosition));
+                holder.mIdView.setText(String.valueOf(stepPosition + 1));
             }
 
-            holder.mIdView.setText(String.valueOf(position));
             holder.mContentView.setText(text);
 
 //            holder.itemView.setTag(mRecipe.getSteps().get(stepPosition));
