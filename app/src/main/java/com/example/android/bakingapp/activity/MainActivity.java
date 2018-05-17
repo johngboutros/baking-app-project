@@ -78,12 +78,11 @@ public class MainActivity extends AppCompatActivity {
 
         if (savedInstanceState != null) {
             restoreInstanceState(savedInstanceState);
+        } else {
+            // Initialize the IdlingResource
+            getIdlingResource();
+            loadBakingRecipes();
         }
-
-        // Initialize the IdlingResource
-        getIdlingResource();
-
-        loadBakingRecipes();
     }
 
     @Override
