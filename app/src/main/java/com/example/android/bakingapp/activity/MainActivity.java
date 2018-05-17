@@ -53,9 +53,9 @@ public class MainActivity extends AppCompatActivity {
     private boolean isLoading;
 
     // Saved instance state Bundle keys
-    private final static String LAYOUT_STATE_BUNDLE_KEY = "layout_state";
-    private final static String ADAPTER_STATE_BUNDLE_KEY = "adapter_state";
-    private final static String TITLE_BUNDLE_KEY = "title";
+//    private final static String LAYOUT_STATE_BUNDLE_KEY = "layout_state";
+    private final static String SAVED_STATE_BUNDLE_KEY = "saved_state";
+//    private final static String TITLE_BUNDLE_KEY = "title";
 
     // Recipes Adapter
     private RecipesListAdapter recipesAdapter;
@@ -130,12 +130,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        Parcelable adapterState = saveInstanceState();
-        Parcelable layoutState = recyclerView.getLayoutManager().onSaveInstanceState();
+        Parcelable savedState = saveInstanceState();
 
-        outState.putParcelable(ADAPTER_STATE_BUNDLE_KEY, adapterState);
-        outState.putParcelable(LAYOUT_STATE_BUNDLE_KEY, layoutState);
-        outState.putString(TITLE_BUNDLE_KEY, String.valueOf(getTitle()));
+        outState.putParcelable(SAVED_STATE_BUNDLE_KEY, savedState);
     }
 
     private void loadBakingRecipes() {
@@ -210,6 +207,9 @@ public class MainActivity extends AppCompatActivity {
             state.recipes = recipesAdapter.getRecipes();
         }
 
+        state.layoutState = recyclerView.getLayoutManager().onSaveInstanceState();
+        state.title = String.valueOf(getTitle());
+
         return Parcels.wrap(state);
     }
 
@@ -222,16 +222,13 @@ public class MainActivity extends AppCompatActivity {
     public void restoreInstanceState(Bundle savedInstanceState) {
 
         SavedInstanceState state = Parcels.unwrap(savedInstanceState
-                .getParcelable(ADAPTER_STATE_BUNDLE_KEY));
+                .getParcelable(SAVED_STATE_BUNDLE_KEY));
 
-        Parcelable layoutState = savedInstanceState.getParcelable(LAYOUT_STATE_BUNDLE_KEY);
-
-        String title = savedInstanceState.getString(TITLE_BUNDLE_KEY);
-        setTitle(title);
+        setTitle(state.title);
 
         if (recipesAdapter != null) {
-                recipesAdapter.setRecipes(state.recipes);
-                recyclerView.getLayoutManager().onRestoreInstanceState(layoutState);
+            recipesAdapter.setRecipes(state.recipes);
+            recyclerView.getLayoutManager().onRestoreInstanceState(state.layoutState);
         }
     }
 
@@ -248,6 +245,8 @@ public class MainActivity extends AppCompatActivity {
     static class SavedInstanceState {
         // Discovered recipes list
         List<Recipe> recipes = new ArrayList<Recipe>();
+        Parcelable layoutState;
+        String title;
     }
 
     /**
