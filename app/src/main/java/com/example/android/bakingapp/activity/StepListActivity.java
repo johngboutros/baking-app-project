@@ -28,6 +28,7 @@ import com.example.android.bakingapp.fragment.StepDetailFragment;
 import org.parceler.Parcel;
 import org.parceler.Parcels;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -87,7 +88,8 @@ public class StepListActivity extends AppCompatActivity {
                 if (!mTwoPane) {
                     // Start detail activity
                     // TODO Test tablet
-                    startIngredientsActivity(StepListActivity.this, recipe.getIngredients());
+                    startIngredientsActivity(StepListActivity.this, recipe.getIngredients()
+                        , recipe.getSteps());
                 }
             }
         });
@@ -156,9 +158,19 @@ public class StepListActivity extends AppCompatActivity {
 
                 } else {
                    if (step != null) {
-                        startStepActivity(view.getContext(), step);
+                       List<Step> nextSteps = new ArrayList<>();
+                       // Should implement Step hashcode(0 & equals()?
+                       List<Step> steps = mRecipe.getSteps();
+                       int stepIndex = steps.indexOf(step);
+                       if (stepIndex > -1 && stepIndex < steps.size() - 1) {
+                           for (int i = stepIndex + 1; i < steps.size(); i++) {
+                               nextSteps.add(steps.get(i));
+                           }
+                       }
+
+                       startStepActivity(view.getContext(), step, nextSteps);
                     } else if (ingredients != null) {
-                       startIngredientsActivity(view.getContext(), ingredients);
+                       startIngredientsActivity(view.getContext(), ingredients, mRecipe.getSteps());
                     } else {
                         // TODO handle empty recipe
                     }
@@ -267,20 +279,21 @@ public class StepListActivity extends AppCompatActivity {
                 .commit();
     }
 
-    private static void startIngredientsActivity(Context context, List<Ingredient> ingredients) {
+    private static void startIngredientsActivity(Context context, List<Ingredient> ingredients
+            , List<Step> nextSteps) {
         if (ingredients != null) {
             Bundle bundle = new Bundle();
-            bundle.putParcelable(StepDetailFragment.ARG_INGREDIENTS,
-                    Parcels.wrap(ingredients));
+            bundle.putParcelable(StepDetailFragment.ARG_INGREDIENTS, Parcels.wrap(ingredients));
+            bundle.putParcelable(StepDetailActivity.ARG_NEXT_STEPS, Parcels.wrap(nextSteps));
             startDetailActivity(context, bundle);
         }
     }
 
-    private static void startStepActivity(Context context, Step step) {
+    private static void startStepActivity(Context context, Step step, List<Step> nextSteps) {
         if (step != null) {
             Bundle bundle = new Bundle();
-            bundle.putParcelable(StepDetailFragment.ARG_STEP,
-                    Parcels.wrap(step));
+            bundle.putParcelable(StepDetailFragment.ARG_STEP, Parcels.wrap(step));
+            bundle.putParcelable(StepDetailActivity.ARG_NEXT_STEPS, Parcels.wrap(nextSteps));
             startDetailActivity(context, bundle);
         }
     }

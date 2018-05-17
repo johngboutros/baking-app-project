@@ -4,16 +4,24 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.ActionBar;
 import android.support.v4.app.NavUtils;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.example.android.bakingapp.R;
+import com.example.android.bakingapp.data.Ingredient;
+import com.example.android.bakingapp.data.Step;
 import com.example.android.bakingapp.fragment.StepDetailFragment;
+
+import org.parceler.Parcels;
+
+import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * An activity representing a single Step detail screen. This
@@ -23,22 +31,35 @@ import com.example.android.bakingapp.fragment.StepDetailFragment;
  */
 public class StepDetailActivity extends AppCompatActivity {
 
+    public final static String ARG_NEXT_STEPS = "next_steps";
+    private List<Step> mNextSteps;
+
+    @BindView(R.id.fab)
+    FloatingActionButton fab;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_step_detail);
+        ButterKnife.bind(this);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own detail action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-                goBack();
-            }
-        });
+        // Setup Floating Button
+//        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+////                Snackbar.make(view, "Replace with your own detail action", Snackbar.LENGTH_LONG)
+////                        .setAction("Action", null).show();
+//                if (hasNext()) {
+//                    setup(null, mNextSteps.remove(0));
+//                } else {
+//                    goBack();
+//                }
+//            }
+//        });
 
         // Show the Up button in the action bar.
         ActionBar actionBar = getSupportActionBar();
@@ -60,19 +81,29 @@ public class StepDetailActivity extends AppCompatActivity {
             // using a fragment transaction.
 
             Parcelable stepArgument = getIntent().getParcelableExtra(StepDetailFragment.ARG_STEP);
+            Parcelable stepsParcel = getIntent().getParcelableExtra(StepDetailActivity.ARG_NEXT_STEPS);
+            if (stepsParcel != null) {
+                mNextSteps = Parcels.unwrap(stepsParcel);
+            }
+
             Parcelable ingredientsArguments = getIntent()
                     .getParcelableExtra(StepDetailFragment.ARG_INGREDIENTS);
-            Bundle arguments = new Bundle();
-            if (stepArgument != null) {
-                arguments.putParcelable(StepDetailFragment.ARG_STEP, stepArgument);
-            } else if (ingredientsArguments != null) {
-                arguments.putParcelable(StepDetailFragment.ARG_INGREDIENTS, ingredientsArguments);
-            }
-            StepDetailFragment fragment = new StepDetailFragment();
-            fragment.setArguments(arguments);
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.step_detail_container, fragment)
-                    .commit();
+
+            setup((List<Ingredient>) Parcels.unwrap(ingredientsArguments),
+                    (Step) Parcels.unwrap(stepArgument));
+
+            // TODO move to setup()
+//            Bundle arguments = new Bundle();
+//            if (stepArgument != null) {
+//                arguments.putParcelable(StepDetailFragment.ARG_STEP, stepArgument);
+//            } else if (ingredientsArguments != null) {
+//                arguments.putParcelable(StepDetailFragment.ARG_INGREDIENTS, ingredientsArguments);
+//            }
+//            StepDetailFragment fragment = new StepDetailFragment();
+//            fragment.setArguments(arguments);
+//            getSupportFragmentManager().beginTransaction()
+//                    .add(R.id.step_detail_container, fragment)
+//                    .commit();
         }
     }
 
@@ -95,5 +126,46 @@ public class StepDetailActivity extends AppCompatActivity {
 
     private void goBack() {
         NavUtils.navigateUpTo(this, new Intent(this, StepListActivity.class));
+    }
+
+
+    private void setup(List<Ingredient> ingredients, Step step) {
+
+        Bundle arguments = new Bundle();
+        if (step != null) {
+            arguments.putParcelable(StepDetailFragment.ARG_STEP, Parcels.wrap(step));
+        } else if (ingredients != null) {
+            arguments.putParcelable(StepDetailFragment.ARG_INGREDIENTS, Parcels.wrap(ingredients));
+        }
+
+        StepDetailFragment fragment = new StepDetailFragment();
+        fragment.setArguments(arguments);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.step_detail_container, fragment)
+                .commit();
+
+        // Setup Floating Button
+        if (hasNext()) {
+            fab.setImageResource(R.drawable.ic_arrow_forward_black_24dp);
+        } else {
+            fab.setImageResource(R.drawable.ic_arrow_upward_black_24dp);
+        }
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                Snackbar.make(view, "Replace with your own detail action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+                if (hasNext()) {
+                    setup(null, mNextSteps.remove(0));
+                } else {
+                    goBack();
+                }
+            }
+        });
+    }
+
+    private boolean hasNext() {
+        return mNextSteps != null && mNextSteps.size() > 0;
     }
 }
