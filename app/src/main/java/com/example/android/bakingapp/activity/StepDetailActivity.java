@@ -34,8 +34,9 @@ public class StepDetailActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own detail action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+//                Snackbar.make(view, "Replace with your own detail action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+                goBack();
             }
         });
 
@@ -86,9 +87,13 @@ public class StepDetailActivity extends AppCompatActivity {
             //
             // http://developer.android.com/design/patterns/navigation.html#up-vs-back
             //
-            NavUtils.navigateUpTo(this, new Intent(this, StepListActivity.class));
+            goBack();
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void goBack() {
+        NavUtils.navigateUpTo(this, new Intent(this, StepListActivity.class));
     }
 }
