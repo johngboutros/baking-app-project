@@ -30,6 +30,9 @@ import org.parceler.Parcels;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * An activity representing a list of Steps. This activity
  * has different presentations for handset and tablet-size devices. On
@@ -54,10 +57,14 @@ public class StepListActivity extends AppCompatActivity {
     // Recipe
     private Recipe recipe;
 
+    @BindView(R.id.step_list)
+    RecyclerView stepsRecyclerView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_step_list);
+        ButterKnife.bind(this);
 
         if (savedInstanceState != null) {
             // restore saved instance
@@ -94,14 +101,18 @@ public class StepListActivity extends AppCompatActivity {
             mTwoPane = true;
         }
 
-        View recyclerView = findViewById(R.id.step_list);
-        assert recyclerView != null;
-        setupRecyclerView((RecyclerView) recyclerView);
+//        View recyclerView = findViewById(R.id.step_list);
+//        assert recyclerView != null;
+//        setupRecyclerView((RecyclerView) recyclerView);
+        assert stepsRecyclerView != null;
+        setupRecyclerView(stepsRecyclerView);
 
         if (savedInstanceState == null) {
             if (mTwoPane) {
                 startIngredientsFragment(this, recipe.getIngredients());
             }
+        } else {
+            restoreInstanceState(savedInstanceState);
         }
     }
 
@@ -264,6 +275,7 @@ public class StepListActivity extends AppCompatActivity {
     static class SavedInstanceState {
         // Discovered recipes list
         Recipe recipe;
+        Parcelable stepsListLayoutState;
     }
 
     @Override
@@ -284,6 +296,7 @@ public class StepListActivity extends AppCompatActivity {
         SavedInstanceState state = new SavedInstanceState();
 
         state.recipe = this.recipe;
+        state.stepsListLayoutState = stepsRecyclerView.getLayoutManager().onSaveInstanceState();
 
         return Parcels.wrap(state);
     }
@@ -300,6 +313,7 @@ public class StepListActivity extends AppCompatActivity {
                 .getParcelable(STATE_BUNDLE_KEY));
 
         this.recipe = state.recipe;
+        stepsRecyclerView.getLayoutManager().onRestoreInstanceState(state.stepsListLayoutState);
     }
 
     @Override
