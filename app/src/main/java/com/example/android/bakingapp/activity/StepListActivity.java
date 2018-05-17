@@ -82,8 +82,13 @@ public class StepListActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+                if (!mTwoPane) {
+                    // Start detail activity
+                    // TODO Test tablet
+                    startIngredientsActivity(StepListActivity.this, recipe.getIngredients());
+                }
             }
         });
 
@@ -150,19 +155,13 @@ public class StepListActivity extends AppCompatActivity {
                     }
 
                 } else {
-                    Context context = view.getContext();
-                    Intent intent = new Intent(context, StepDetailActivity.class);
-
-                    if (step != null) {
-                        intent.putExtra(StepDetailFragment.ARG_STEP, Parcels.wrap(step));
+                   if (step != null) {
+                        startStepActivity(view.getContext(), step);
                     } else if (ingredients != null) {
-                        intent.putExtra(StepDetailFragment.ARG_INGREDIENTS,
-                                Parcels.wrap(ingredients));
+                       startIngredientsActivity(view.getContext(), ingredients);
                     } else {
                         // TODO handle empty recipe
                     }
-
-                    context.startActivity(intent);
                 }
             }
         };
@@ -266,6 +265,30 @@ public class StepListActivity extends AppCompatActivity {
         activity.getSupportFragmentManager().beginTransaction()
                 .replace(R.id.step_detail_container, fragment)
                 .commit();
+    }
+
+    private static void startIngredientsActivity(Context context, List<Ingredient> ingredients) {
+        if (ingredients != null) {
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(StepDetailFragment.ARG_INGREDIENTS,
+                    Parcels.wrap(ingredients));
+            startDetailActivity(context, bundle);
+        }
+    }
+
+    private static void startStepActivity(Context context, Step step) {
+        if (step != null) {
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(StepDetailFragment.ARG_STEP,
+                    Parcels.wrap(step));
+            startDetailActivity(context, bundle);
+        }
+    }
+
+    private static void startDetailActivity(Context context, Bundle extras) {
+        Intent intent = new Intent(context, StepDetailActivity.class);
+        intent.putExtras(extras);
+        context.startActivity(intent);
     }
 
     /**

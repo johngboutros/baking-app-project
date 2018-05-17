@@ -89,17 +89,16 @@ public class StepListActivityTest {
         onView(withId(R.id.step_content_tv)).check(matches(isDisplayed()));
     }
 
-//    @Test
-//    public void clickRecipe_displayIngredientsFirst() {
-//
-//        // Click on the first recipe
-//        onView(withId(R.id.recipe_list_rv))
-//                .perform(actionOnItemAtPosition(0, click()));
-//
-//        // Check that the first step is ingredients
-//        onView(withId(R.id.step_list))
-//                .check(matches(atPosition(0, hasDescendant(withText("Ingredients")))));
-//    }
+    @Test
+    public void clickNext_displayIngredients() {
+
+        // Click on the first recipe
+        onView(withId(R.id.fab)).perform(click());
+
+        // Check that the first step is ingredients
+        onView(withId(R.id.ingredients_container_ll)).check(matches(isDisplayed()));
+
+    }
 
 //
 //    @Test
