@@ -9,6 +9,7 @@
     android:layout_marginTop="@dimen/movie_detail_subrow_margin_v"
     android:orientation="horizontal">
 
+    <!--TODO Remove me, I look ugly-->
     <TextView
         android:id="@+id/step_header_tv"
         android:layout_width="wrap_content"
@@ -23,7 +24,7 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Step 1" />
 
-
+    <!--TODO Remove me, I look ugly-->
     <!--Horizontal Separator-->
     <View
         android:id="@+id/separator_v"

@@ -26,6 +26,8 @@ import static android.support.test.espresso.contrib.RecyclerViewActions.actionOn
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static com.example.android.bakingapp.utils.TestUtils.isScreenSw600dp;
+import static org.junit.Assume.assumeTrue;
 
 /**
  * Created by john on 13/05/18.
@@ -88,6 +90,8 @@ public class StepListActivityTest {
 
     @Test
     public void clickNext_displayIngredients() {
+        // Test only for phones
+        assumeTrue(!isScreenSw600dp(mActivityRule.getActivity()));
 
         // Click the next button
         onView(withId(R.id.fab)).perform(click());

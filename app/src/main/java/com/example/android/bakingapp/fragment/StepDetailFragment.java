@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
@@ -189,13 +190,11 @@ public class StepDetailFragment extends Fragment implements Player.EventListener
         mPlayerLoading = layout.findViewById(R.id.step_video_loading_pb);
 
         if (!TextUtils.isEmpty(step.getVideoURL())) {
-            // TODO Setup player
-            // TODO display loading animation till the player loaded
-//            mPlayerView.setVisibility(View.VISIBLE);
+            // Setup player
             mPlayerLoading.setVisibility(View.VISIBLE);
             setupPlayer(mPlayerView, step.getId(), step.getVideoURL());
         } else {
-            // TODO Hide player
+            // Hide player
             mPlayerView.setVisibility(View.GONE);
         }
 
@@ -269,6 +268,13 @@ public class StepDetailFragment extends Fragment implements Player.EventListener
             mPlayerLoading.setVisibility(View.GONE);
             mPlayerView.setVisibility(View.VISIBLE);
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        // TODO Save fragment state!
     }
 
     @Override

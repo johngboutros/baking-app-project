@@ -93,7 +93,6 @@ public class StepListActivity extends AppCompatActivity implements View.OnClickL
             public void onClick(View view) {
                 if (!mTwoPane) {
                     // Start detail activity
-                    // TODO Test tablet
                     startIngredientsActivity(StepListActivity.this, recipe.getIngredients()
                         , recipe.getSteps());
                 } else {
@@ -241,7 +240,6 @@ public class StepListActivity extends AppCompatActivity implements View.OnClickL
     private static void startDetailFragment(FragmentActivity activity, Bundle arguments) {
         StepDetailFragment fragment = new StepDetailFragment();
         fragment.setArguments(arguments);
-        // FIXME do not replace ScrollView
         activity.getSupportFragmentManager().beginTransaction()
                 .replace(R.id.step_detail_container, fragment)
                 .commit();
@@ -345,6 +343,7 @@ public class StepListActivity extends AppCompatActivity implements View.OnClickL
 
         SavedInstanceState state = new SavedInstanceState();
 
+        // TODO Save Step/Ingredients details view's state
         state.recipe = this.recipe;
         state.stepsListLayoutState = stepsRecyclerView.getLayoutManager().onSaveInstanceState();
 
@@ -391,6 +390,7 @@ public class StepListActivity extends AppCompatActivity implements View.OnClickL
         if (view.getTag() instanceof Step) {
             currentStep = (Step) view.getTag();
         } else {
+            currentStep = null;
             ingredients = (List<Ingredient>) view.getTag();
         }
 
