@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
@@ -39,6 +39,7 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.squareup.picasso.Picasso;
 
+import org.parceler.Parcel;
 import org.parceler.Parcels;
 
 import java.util.List;
@@ -50,6 +51,10 @@ import java.util.List;
  * on handsets.
  */
 public class StepDetailFragment extends Fragment implements Player.EventListener {
+
+    private static final String STATE_BUNDLE_KEY = StepDetailFragment.class.getSimpleName()
+            + "_state_bundle_key";
+
     /**
      * The fragment arguments representing a step (or ingredients) that this fragment
      * represents.
@@ -62,6 +67,7 @@ public class StepDetailFragment extends Fragment implements Player.EventListener
      */
     private Step mStep;
     private List<Ingredient> mIngredients;
+    private String mTitle;
 
     /**
      * ExoPlayer
@@ -81,14 +87,12 @@ public class StepDetailFragment extends Fragment implements Player.EventListener
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        String title = "";
-
         if (getArguments().containsKey(ARG_STEP)) {
             // Load the dummy content specified by the fragment
             // arguments. In a real-world scenario, use a Loader
             // to load content from a content provider.
             mStep = Parcels.unwrap(getArguments().getParcelable(ARG_STEP));
-            title = mStep.getShortDescription();
+            mTitle = mStep.getShortDescription();
             // Start video in fullscreen IF exists AND landscape AND phone
             boolean tabletMode = getActivity().findViewById(R.id.step_list) != null;
             if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE
@@ -97,9 +101,13 @@ public class StepDetailFragment extends Fragment implements Player.EventListener
             }
         } else if (getArguments().containsKey(ARG_INGREDIENTS)) {
             mIngredients = Parcels.unwrap(getArguments().getParcelable(ARG_INGREDIENTS));
-            title = getString(R.string.ingredients_label);
+            mTitle = getString(R.string.ingredients_label);
         }
 
+        setupTitle(mTitle);
+    }
+
+    private void setupTitle(String title) {
         Activity activity = this.getActivity();
         CollapsingToolbarLayout appBarLayout = activity.findViewById(R.id.toolbar_layout);
         if (appBarLayout != null) {
@@ -128,12 +136,6 @@ public class StepDetailFragment extends Fragment implements Player.EventListener
         } else if (mIngredients != null) {
             rootView = getIngredientsLayout(inflater, container, mIngredients);
         }
-
-//        rootView = inflater.inflate(R.layout.step_detail, container, false);
-        // Show the dummy content as text in a TextView.
-//        if (mItem != null) {
-//            ((TextView) rootView.findViewById(R.id.step_detail)).setText(mItem.details);
-//        }
 
         return rootView;
     }
@@ -271,11 +273,30 @@ public class StepDetailFragment extends Fragment implements Player.EventListener
         }
     }
 
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
+    /**
+     * A class to save the adapter's state
+     */
+    @Parcel
+    static class SavedInstanceState {
+        String title;
+    }
 
-        // TODO Save fragment state!
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        SavedInstanceState state = new SavedInstanceState();
+        state.title = this.mTitle;
+        outState.putParcelable(STATE_BUNDLE_KEY, Parcels.wrap(state));
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState == null) return;
+        SavedInstanceState state = Parcels.unwrap(savedInstanceState
+                .getParcelable(STATE_BUNDLE_KEY));
+        this.mTitle = state.title;
+        setupTitle(mTitle);
     }
 
     @Override

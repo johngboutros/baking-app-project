@@ -325,6 +325,7 @@ public class StepListActivity extends AppCompatActivity implements View.OnClickL
     static class SavedInstanceState {
         // Discovered recipes list
         Recipe recipe;
+        Step currentStep;
         Parcelable stepsListLayoutState;
     }
 
@@ -332,8 +333,8 @@ public class StepListActivity extends AppCompatActivity implements View.OnClickL
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        Parcelable adapterState = saveInstanceState();
-        outState.putParcelable(STATE_BUNDLE_KEY, adapterState);
+        Parcelable state = saveInstanceState();
+        outState.putParcelable(STATE_BUNDLE_KEY, state);
     }
 
     /**
@@ -345,9 +346,10 @@ public class StepListActivity extends AppCompatActivity implements View.OnClickL
 
         SavedInstanceState state = new SavedInstanceState();
 
-        // TODO Save Step/Ingredients details view's state
         state.recipe = this.recipe;
+        state.currentStep = this.currentStep;
         state.stepsListLayoutState = stepsRecyclerView.getLayoutManager().onSaveInstanceState();
+        // TODO Save Step/Ingredients details view's state
 
         return Parcels.wrap(state);
     }
@@ -364,7 +366,9 @@ public class StepListActivity extends AppCompatActivity implements View.OnClickL
                 .getParcelable(STATE_BUNDLE_KEY));
 
         this.recipe = state.recipe;
+        this.currentStep = state.currentStep;
         stepsRecyclerView.getLayoutManager().onRestoreInstanceState(state.stepsListLayoutState);
+        // TODO Restore Step/Ingredients details view's state
     }
 
     @Override

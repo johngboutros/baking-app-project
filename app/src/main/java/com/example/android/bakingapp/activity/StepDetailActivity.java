@@ -13,9 +13,11 @@ import android.view.View;
 
 import com.example.android.bakingapp.R;
 import com.example.android.bakingapp.data.Ingredient;
+import com.example.android.bakingapp.data.Recipe;
 import com.example.android.bakingapp.data.Step;
 import com.example.android.bakingapp.fragment.StepDetailFragment;
 
+import org.parceler.Parcel;
 import org.parceler.Parcels;
 
 import java.util.List;
@@ -31,6 +33,9 @@ import butterknife.ButterKnife;
  */
 public class StepDetailActivity extends AppCompatActivity {
 
+    private static final String STATE_BUNDLE_KEY = StepDetailActivity.class.getSimpleName()
+            + "_state_bundle_key";
+
     public final static String ARG_NEXT_STEPS = "next_steps";
     private List<Step> mNextSteps;
 
@@ -45,21 +50,6 @@ public class StepDetailActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
         setSupportActionBar(toolbar);
-
-        // Setup Floating Button
-//        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-////                Snackbar.make(view, "Replace with your own detail action", Snackbar.LENGTH_LONG)
-////                        .setAction("Action", null).show();
-//                if (hasNext()) {
-//                    setup(null, mNextSteps.remove(0));
-//                } else {
-//                    goBack();
-//                }
-//            }
-//        });
 
         // Show the Up button in the action bar.
         ActionBar actionBar = getSupportActionBar();
@@ -91,19 +81,9 @@ public class StepDetailActivity extends AppCompatActivity {
 
             setup((List<Ingredient>) Parcels.unwrap(ingredientsArguments),
                     (Step) Parcels.unwrap(stepArgument));
-
-            // TODO move to setup()
-//            Bundle arguments = new Bundle();
-//            if (stepArgument != null) {
-//                arguments.putParcelable(StepDetailFragment.ARG_STEP, stepArgument);
-//            } else if (ingredientsArguments != null) {
-//                arguments.putParcelable(StepDetailFragment.ARG_INGREDIENTS, ingredientsArguments);
-//            }
-//            StepDetailFragment fragment = new StepDetailFragment();
-//            fragment.setArguments(arguments);
-//            getSupportFragmentManager().beginTransaction()
-//                    .add(R.id.step_detail_container, fragment)
-//                    .commit();
+        } else {
+            // TODO restore state and setup
+            onRestoreInstanceState(savedInstanceState);
         }
     }
 
@@ -145,6 +125,10 @@ public class StepDetailActivity extends AppCompatActivity {
                 .commit();
 
         // Setup Floating Button
+        setupFab();
+    }
+
+    private void setupFab() {
         if (hasNext()) {
             fab.setImageResource(R.drawable.ic_arrow_forward_black_24dp);
         } else {
@@ -154,8 +138,6 @@ public class StepDetailActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own detail action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
                 if (hasNext()) {
                     setup(null, mNextSteps.remove(0));
                 } else {
@@ -167,5 +149,31 @@ public class StepDetailActivity extends AppCompatActivity {
 
     private boolean hasNext() {
         return mNextSteps != null && mNextSteps.size() > 0;
+    }
+
+
+    /**
+     * A class to save the adapter's state
+     */
+    @Parcel
+    static class SavedInstanceState {
+        List<Step> nextSteps;
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        SavedInstanceState state = new SavedInstanceState();
+        state.nextSteps = this.mNextSteps;
+        outState.putParcelable(STATE_BUNDLE_KEY, Parcels.wrap(state));
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        SavedInstanceState state = Parcels.unwrap(savedInstanceState
+                .getParcelable(STATE_BUNDLE_KEY));
+        this.mNextSteps = state.nextSteps;
+        setupFab();
     }
 }
