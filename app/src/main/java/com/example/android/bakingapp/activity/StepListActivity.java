@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
@@ -58,6 +57,9 @@ public class StepListActivity extends AppCompatActivity {
     // Recipe
     private Recipe recipe;
 
+    // Current Step (If null, we're on Ingredients)
+    private Step currentStep;
+
     @BindView(R.id.step_list)
     RecyclerView stepsRecyclerView;
 
@@ -86,13 +88,13 @@ public class StepListActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
                 if (!mTwoPane) {
                     // Start detail activity
                     // TODO Test tablet
                     startIngredientsActivity(StepListActivity.this, recipe.getIngredients()
                         , recipe.getSteps());
+                } else {
+                    startNextStepFragment();
                 }
             }
         });
@@ -136,23 +138,25 @@ public class StepListActivity extends AppCompatActivity {
         private final StepListActivity mParentActivity;
         private final Recipe mRecipe;
         private final boolean mTwoPane;
+        private Step mCurrentStep;
+
         private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                Step step = null;
+//                Step step = null;
                 List<Ingredient> ingredients = null;
 
                 if (view.getTag() instanceof Step) {
-                    step = (Step) view.getTag();
+                    mCurrentStep = (Step) view.getTag();
                 } else {
                     ingredients = (List<Ingredient>) view.getTag();
                 }
 
                 if (mTwoPane) {
 
-                    if (step != null) {
-                        startStepFragment(mParentActivity, step);
+                    if (mCurrentStep != null) {
+                        startStepFragment(mParentActivity, mCurrentStep);
                     } else if (ingredients != null) {
                         startIngredientsFragment(mParentActivity, ingredients);
                     } else {
@@ -160,18 +164,9 @@ public class StepListActivity extends AppCompatActivity {
                     }
 
                 } else {
-                   if (step != null) {
-                       List<Step> nextSteps = new ArrayList<>();
-                       // Should implement Step hashcode(0 & equals()?
-                       List<Step> steps = mRecipe.getSteps();
-                       int stepIndex = steps.indexOf(step);
-                       if (stepIndex > -1 && stepIndex < steps.size() - 1) {
-                           for (int i = stepIndex + 1; i < steps.size(); i++) {
-                               nextSteps.add(steps.get(i));
-                           }
-                       }
-
-                       startStepActivity(view.getContext(), step, nextSteps);
+                   if (mCurrentStep != null) {
+                       List<Step> nextSteps = getNextSteps(mCurrentStep, mRecipe.getSteps());
+                       startStepActivity(view.getContext(), mCurrentStep, nextSteps);
                     } else if (ingredients != null) {
                        startIngredientsActivity(view.getContext(), ingredients, mRecipe.getSteps());
                     } else {
@@ -230,6 +225,14 @@ public class StepListActivity extends AppCompatActivity {
 
 //            holder.itemView.setTag(mRecipe.getSteps().get(stepPosition));
             holder.itemView.setOnClickListener(mOnClickListener);
+        }
+
+        public Step getCurrentStep() {
+            return mCurrentStep;
+        }
+
+        public void setCurrentStep(Step mCurrentStep) {
+            this.mCurrentStep = mCurrentStep;
         }
 
         @Override
@@ -306,6 +309,42 @@ public class StepListActivity extends AppCompatActivity {
         Intent intent = new Intent(context, StepDetailActivity.class);
         intent.putExtras(extras);
         context.startActivity(intent);
+    }
+
+    private static List<Step> getNextSteps(Step mCurrentStep, List<Step> steps) {
+        List<Step> nextSteps = new ArrayList<>();
+        // Should implement Step hashcode(0 & equals()?
+        int stepIndex = steps.indexOf(mCurrentStep);
+        if (stepIndex > -1 && stepIndex < steps.size() - 1) {
+            for (int i = stepIndex + 1; i < steps.size(); i++) {
+                nextSteps.add(steps.get(i));
+            }
+        }
+        return nextSteps;
+    }
+
+    private static Step getNextStep(Step currentStep, List<Step> steps) {
+
+        if (steps == null || steps.isEmpty()) return null;
+
+        if (currentStep == null) return steps.get(0);
+
+        // Should implement Step hashcode(0 & equals()?
+        int stepIndex = steps.indexOf(currentStep);
+        if (stepIndex > -1 && stepIndex < steps.size() - 1) {
+            return steps.get(stepIndex + 1);
+        }
+        return null;
+    }
+
+    private void startNextStepFragment() {
+        SimpleItemRecyclerViewAdapter adapter =
+                (SimpleItemRecyclerViewAdapter) stepsRecyclerView.getAdapter();
+        Step currentStep = adapter.getCurrentStep();
+        Step nextStep = getNextStep(currentStep, recipe.getSteps());
+        if (nextStep == null) return;
+        adapter.setCurrentStep(nextStep);
+        startStepFragment(this, nextStep);
     }
 
     /**
