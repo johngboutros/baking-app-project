@@ -41,7 +41,7 @@ import butterknife.ButterKnife;
  * item details. On tablets, the activity presents the list of items and
  * item details side-by-side using two vertical panes.
  */
-public class StepListActivity extends AppCompatActivity {
+public class StepListActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final String STATE_BUNDLE_KEY = StepListActivity.class.getSimpleName()
             + "_state_bundle_key";
@@ -57,11 +57,14 @@ public class StepListActivity extends AppCompatActivity {
     // Recipe
     private Recipe recipe;
 
-    // Current Step (If null, we're on Ingredients)
+    // Current Step
     private Step currentStep;
 
     @BindView(R.id.step_list)
     RecyclerView stepsRecyclerView;
+
+    @BindView(R.id.fab)
+    FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,7 +87,7 @@ public class StepListActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         toolbar.setTitle(getTitle());
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -94,7 +97,7 @@ public class StepListActivity extends AppCompatActivity {
                     startIngredientsActivity(StepListActivity.this, recipe.getIngredients()
                         , recipe.getSteps());
                 } else {
-                    startNextStepFragment();
+                    startNextFragment();
                 }
             }
         });
@@ -129,59 +132,25 @@ public class StepListActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(this, recipe, mTwoPane));
+        recyclerView.setAdapter(
+                new SimpleItemRecyclerViewAdapter(this, recipe, this));
     }
 
     public static class SimpleItemRecyclerViewAdapter
             extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
 
         private final StepListActivity mParentActivity;
+
         private final Recipe mRecipe;
-        private final boolean mTwoPane;
-        private Step mCurrentStep;
 
-        private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-//                Step step = null;
-                List<Ingredient> ingredients = null;
-
-                if (view.getTag() instanceof Step) {
-                    mCurrentStep = (Step) view.getTag();
-                } else {
-                    ingredients = (List<Ingredient>) view.getTag();
-                }
-
-                if (mTwoPane) {
-
-                    if (mCurrentStep != null) {
-                        startStepFragment(mParentActivity, mCurrentStep);
-                    } else if (ingredients != null) {
-                        startIngredientsFragment(mParentActivity, ingredients);
-                    } else {
-                        // TODO handle empty recipe
-                    }
-
-                } else {
-                   if (mCurrentStep != null) {
-                       List<Step> nextSteps = getNextSteps(mCurrentStep, mRecipe.getSteps());
-                       startStepActivity(view.getContext(), mCurrentStep, nextSteps);
-                    } else if (ingredients != null) {
-                       startIngredientsActivity(view.getContext(), ingredients, mRecipe.getSteps());
-                    } else {
-                        // TODO handle empty recipe
-                    }
-                }
-            }
-        };
+        private final View.OnClickListener mOnClickListener;
 
         SimpleItemRecyclerViewAdapter(StepListActivity parent,
                                       Recipe recipe,
-                                      boolean twoPane) {
+                                      View.OnClickListener onClickListener) {
             mRecipe = recipe;
             mParentActivity = parent;
-            mTwoPane = twoPane;
+            mOnClickListener = onClickListener;
         }
 
         @Override
@@ -223,16 +192,7 @@ public class StepListActivity extends AppCompatActivity {
 
             holder.mContentView.setText(text);
 
-//            holder.itemView.setTag(mRecipe.getSteps().get(stepPosition));
             holder.itemView.setOnClickListener(mOnClickListener);
-        }
-
-        public Step getCurrentStep() {
-            return mCurrentStep;
-        }
-
-        public void setCurrentStep(Step mCurrentStep) {
-            this.mCurrentStep = mCurrentStep;
         }
 
         @Override
@@ -281,6 +241,7 @@ public class StepListActivity extends AppCompatActivity {
     private static void startDetailFragment(FragmentActivity activity, Bundle arguments) {
         StepDetailFragment fragment = new StepDetailFragment();
         fragment.setArguments(arguments);
+        // FIXME do not replace ScrollView
         activity.getSupportFragmentManager().beginTransaction()
                 .replace(R.id.step_detail_container, fragment)
                 .commit();
@@ -337,14 +298,24 @@ public class StepListActivity extends AppCompatActivity {
         return null;
     }
 
-    private void startNextStepFragment() {
-        SimpleItemRecyclerViewAdapter adapter =
-                (SimpleItemRecyclerViewAdapter) stepsRecyclerView.getAdapter();
-        Step currentStep = adapter.getCurrentStep();
+    private void startNextFragment() {
         Step nextStep = getNextStep(currentStep, recipe.getSteps());
-        if (nextStep == null) return;
-        adapter.setCurrentStep(nextStep);
-        startStepFragment(this, nextStep);
+
+        if (nextStep != null) {
+            currentStep = nextStep;
+            startStepFragment(this, nextStep);
+        } else {
+            currentStep = null;
+            startIngredientsFragment(this, recipe.getIngredients());
+            fab.setImageResource(R.drawable.ic_arrow_forward_black_24dp);
+        }
+
+        // If no more steps change "next" button to "up"!
+        if (getNextStep(currentStep, recipe.getSteps()) == null) {
+            fab.setImageResource(R.drawable.ic_arrow_upward_black_24dp);
+        } else {
+            fab.setImageResource(R.drawable.ic_arrow_forward_black_24dp);
+        }
     }
 
     /**
@@ -411,5 +382,37 @@ public class StepListActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onClick(View view) {
+        List<Ingredient> ingredients = null;
+
+        if (view.getTag() instanceof Step) {
+            currentStep = (Step) view.getTag();
+        } else {
+            ingredients = (List<Ingredient>) view.getTag();
+        }
+
+        if (mTwoPane) {
+
+            if (currentStep != null) {
+                startStepFragment(this, currentStep);
+            } else if (ingredients != null) {
+                startIngredientsFragment(this, ingredients);
+            } else {
+                // TODO handle empty recipe
+            }
+
+        } else {
+            if (currentStep != null) {
+                List<Step> nextSteps = getNextSteps(currentStep, recipe.getSteps());
+                startStepActivity(view.getContext(), currentStep, nextSteps);
+            } else if (ingredients != null) {
+                startIngredientsActivity(view.getContext(), ingredients, recipe.getSteps());
+            } else {
+                // TODO handle empty recipe
+            }
+        }
     }
 }
