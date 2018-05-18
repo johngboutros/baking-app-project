@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -123,7 +122,7 @@ public class StepListActivity extends AppCompatActivity implements View.OnClickL
 
         if (savedInstanceState == null) {
             if (mTwoPane) {
-                startIngredientsFragment(this, recipe.getIngredients());
+                startIngredientsFragment(recipe.getIngredients());
             }
         } else {
             restoreInstanceState(savedInstanceState);
@@ -139,10 +138,14 @@ public class StepListActivity extends AppCompatActivity implements View.OnClickL
             extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
 
         private final StepListActivity mParentActivity;
-
         private final Recipe mRecipe;
-
         private final View.OnClickListener mOnClickListener;
+        private Integer highlightedPosition = null;
+
+        private interface Type {
+            int NORMAL = 0;
+            int HIGHLIGHTED = 1;
+        }
 
         SimpleItemRecyclerViewAdapter(StepListActivity parent,
                                       Recipe recipe,
@@ -156,6 +159,12 @@ public class StepListActivity extends AppCompatActivity implements View.OnClickL
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.step_list_content, parent, false);
+
+            if (viewType == Type.HIGHLIGHTED) {
+                view.setBackgroundColor(mParentActivity
+                        .getResources().getColor(R.color.colorPrimaryLight));
+            }
+
             return new ViewHolder(view);
         }
 
@@ -190,13 +199,27 @@ public class StepListActivity extends AppCompatActivity implements View.OnClickL
             }
 
             holder.mContentView.setText(text);
-
             holder.itemView.setOnClickListener(mOnClickListener);
         }
 
         @Override
         public int getItemCount() {
             return (hasIngredients() ? 1 : 0) + (hasSteps() ? mRecipe.getSteps().size() : 0);
+        }
+
+        public void highlight(Step currentStep) {
+            if (currentStep == null) {
+                highlightedPosition = 0;
+            } else if (mRecipe.getSteps().contains(currentStep)) {
+                highlightedPosition = mRecipe.getSteps().indexOf(currentStep) + 1;
+            }
+            notifyDataSetChanged();
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            return (highlightedPosition != null && highlightedPosition.equals(position)) ?
+                    Type.HIGHLIGHTED : Type.NORMAL;
         }
 
         class ViewHolder extends RecyclerView.ViewHolder {
@@ -220,29 +243,29 @@ public class StepListActivity extends AppCompatActivity implements View.OnClickL
         }
     }
 
-    private static void startStepFragment(FragmentActivity activity, Step step) {
+    private void startStepFragment(Step step) {
 
         Bundle arguments = new Bundle();
         arguments.putParcelable(StepDetailFragment.ARG_STEP, Parcels.wrap(step));
 
-        startDetailFragment(activity, arguments);
+        startDetailFragment(arguments);
     }
 
-    private static void startIngredientsFragment(FragmentActivity activity,
-                                                 List<Ingredient> ingredients) {
+    private void startIngredientsFragment(List<Ingredient> ingredients) {
 
         Bundle arguments = new Bundle();
         arguments.putParcelable(StepDetailFragment.ARG_INGREDIENTS, Parcels.wrap(ingredients));
 
-        startDetailFragment(activity, arguments);
+        startDetailFragment(arguments);
     }
 
-    private static void startDetailFragment(FragmentActivity activity, Bundle arguments) {
+    private void startDetailFragment(Bundle arguments) {
         StepDetailFragment fragment = new StepDetailFragment();
         fragment.setArguments(arguments);
-        activity.getSupportFragmentManager().beginTransaction()
+        this.getSupportFragmentManager().beginTransaction()
                 .replace(R.id.step_detail_container, fragment)
                 .commit();
+        refreshView(currentStep);
     }
 
     private static void startIngredientsActivity(Context context, List<Ingredient> ingredients
@@ -301,21 +324,26 @@ public class StepListActivity extends AppCompatActivity implements View.OnClickL
 
         currentStep = nextStep;
         if (nextStep != null) {
-            startStepFragment(this, nextStep);
+            startStepFragment(nextStep);
         } else {
-            startIngredientsFragment(this, recipe.getIngredients());
+            startIngredientsFragment(recipe.getIngredients());
         }
 
-        // If no more steps change "next" button to "up"!
-        refreshFab(currentStep);
+        //refreshFab(currentStep);
     }
 
-    private void refreshFab(Step currentStep) {
+    private void refreshView(Step currentStep) {
+        // If no more steps change "next" button to "up"!
         if (getNextStep(currentStep, recipe.getSteps()) == null) {
             fab.setImageResource(R.drawable.ic_arrow_upward_black_24dp);
         } else {
             fab.setImageResource(R.drawable.ic_arrow_forward_black_24dp);
         }
+
+        SimpleItemRecyclerViewAdapter adapter =
+                (SimpleItemRecyclerViewAdapter) stepsRecyclerView.getAdapter();
+
+        adapter.highlight(currentStep);
     }
 
     /**
@@ -403,14 +431,14 @@ public class StepListActivity extends AppCompatActivity implements View.OnClickL
         if (mTwoPane) {
 
             if (currentStep != null) {
-                startStepFragment(this, currentStep);
+                startStepFragment(currentStep);
             } else if (ingredients != null) {
-                startIngredientsFragment(this, ingredients);
+                startIngredientsFragment(ingredients);
             } else {
                 // TODO handle empty recipe
             }
 
-            refreshFab(currentStep);
+        //refreshFab(currentStep);
 
         } else {
             if (currentStep != null) {
