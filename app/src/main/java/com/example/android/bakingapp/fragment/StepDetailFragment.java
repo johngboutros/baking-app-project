@@ -170,10 +170,6 @@ public class StepDetailFragment extends Fragment implements Player.EventListener
                 container, false);
 
         // Setup step layout
-        // TODO handle nulls
-        TextView headerTv = layout.findViewById(R.id.step_header_tv);
-        headerTv.setText(step.getShortDescription());
-
         ImageView thumbnailIv = layout.findViewById(R.id.step_thumbnail_iv);
         if (!TextUtils.isEmpty(step.getThumbnailURL())) {
             thumbnailIv.setVisibility(View.VISIBLE);
@@ -199,7 +195,12 @@ public class StepDetailFragment extends Fragment implements Player.EventListener
         }
 
         TextView contentTv = layout.findViewById(R.id.step_content_tv);
-        contentTv.setText(step.getDescription());
+        if (!TextUtils.isEmpty(step.getDescription())) {
+            contentTv.setText(step.getDescription());
+        } else {
+            contentTv.setText(getString(R.string.step_no_description));
+        }
+
 
         return layout;
     }

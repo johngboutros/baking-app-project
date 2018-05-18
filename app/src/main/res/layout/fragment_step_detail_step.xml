@@ -7,47 +7,21 @@
     android:layout_marginEnd="@dimen/movie_detail_row_margin_h"
     android:layout_marginStart="@dimen/movie_detail_row_margin_h"
     android:layout_marginTop="@dimen/movie_detail_subrow_margin_v"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:paddingTop="@dimen/step_details_margin_top">
 
-    <!--TODO Remove me, I look ugly-->
-    <TextView
-        android:id="@+id/step_header_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/movie_detail_row_margin_h"
-        android:layout_marginStart="@dimen/movie_detail_row_margin_h"
-        android:gravity="start|center_vertical"
-        android:textSize="@dimen/movie_detail_paragraph_text_size"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="Step 1" />
-
-    <!--TODO Remove me, I look ugly-->
-    <!--Horizontal Separator-->
-    <View
-        android:id="@+id/separator_v"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/movie_detail_sub_separator_thickness"
-        android:layout_marginTop="@dimen/movie_detail_subrow_margin_v"
-        android:background="@android:color/darker_gray"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/step_header_tv" />
 
     <!--Step Image-->
     <ImageView
         android:id="@+id/step_thumbnail_iv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginEnd="@dimen/step_details_margin_h"
+        android:layout_marginStart="@dimen/step_details_margin_h"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/separator_v" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <!--Step player loading-->
     <ProgressBar

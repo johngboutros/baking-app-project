@@ -115,9 +115,6 @@ public class StepListActivityTest {
             // Click on next button
             onView(withId(R.id.fab)).perform(click());
             // Check step is displayed correctly
-//            onView(allOf(instanceOf(TextView.class), withParent(withId(R.id.toolbar))))
-//                    .check(matches(withText(step.getShortDescription())));
-            onView(withId(R.id.step_header_tv)).check(matches(withText(step.getShortDescription())));
             onView(withId(R.id.step_content_tv)).check(matches(withText(step.getDescription())));
         }
 

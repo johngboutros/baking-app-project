@@ -178,9 +178,9 @@ public class StepListActivity extends AppCompatActivity implements View.OnClickL
             String text;
             if (hasIngredients() && position == 0) {
                 // 1st Page is ingredients
-                text = mParentActivity.getString(R.string.ingredients_label);
+                text = mParentActivity.getString(R.string.show_ingredients);
                 holder.itemView.setTag(mRecipe.getIngredients());
-                holder.mIdView.setText("*");
+                holder.mIdView.setText(" ");
             } else {
                 // Step page
                 Step step = mRecipe.getSteps().get(stepPosition);
@@ -299,16 +299,18 @@ public class StepListActivity extends AppCompatActivity implements View.OnClickL
     private void startNextFragment() {
         Step nextStep = getNextStep(currentStep, recipe.getSteps());
 
+        currentStep = nextStep;
         if (nextStep != null) {
-            currentStep = nextStep;
             startStepFragment(this, nextStep);
         } else {
-            currentStep = null;
             startIngredientsFragment(this, recipe.getIngredients());
-            fab.setImageResource(R.drawable.ic_arrow_forward_black_24dp);
         }
 
         // If no more steps change "next" button to "up"!
+        refreshFab(currentStep);
+    }
+
+    private void refreshFab(Step currentStep) {
         if (getNextStep(currentStep, recipe.getSteps()) == null) {
             fab.setImageResource(R.drawable.ic_arrow_upward_black_24dp);
         } else {
@@ -403,6 +405,8 @@ public class StepListActivity extends AppCompatActivity implements View.OnClickL
             } else {
                 // TODO handle empty recipe
             }
+
+            refreshFab(currentStep);
 
         } else {
             if (currentStep != null) {

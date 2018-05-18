@@ -58,7 +58,7 @@ public class MainActivityTest {
 
         // Check that the first step is ingredients
         onView(withId(R.id.step_list))
-                .check(matches(atPosition(0, hasDescendant(withText("Ingredients")))));
+                .check(matches(atPosition(0, hasDescendant(withText("See ingredients")))));
     }
 
 
