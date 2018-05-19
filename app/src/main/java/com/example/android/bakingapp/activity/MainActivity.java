@@ -20,7 +20,7 @@ import com.example.android.bakingapp.R;
 import com.example.android.bakingapp.adapter.AbstractAdapter;
 import com.example.android.bakingapp.adapter.RecipesListAdapter;
 import com.example.android.bakingapp.data.Recipe;
-import com.example.android.bakingapp.idlingResource.SimpleIdlingResource;
+import com.example.android.bakingapp.utilities.SimpleIdlingResource;
 import com.example.android.bakingapp.utilities.GsonRequest;
 import com.example.android.bakingapp.utilities.NetworkUtils;
 

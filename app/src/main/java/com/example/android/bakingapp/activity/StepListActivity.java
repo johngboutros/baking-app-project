@@ -377,7 +377,6 @@ public class StepListActivity extends AppCompatActivity implements View.OnClickL
         state.recipe = this.recipe;
         state.currentStep = this.currentStep;
         state.stepsListLayoutState = stepsRecyclerView.getLayoutManager().onSaveInstanceState();
-        // TODO Save Step/Ingredients details view's state
 
         return Parcels.wrap(state);
     }
@@ -396,7 +395,6 @@ public class StepListActivity extends AppCompatActivity implements View.OnClickL
         this.recipe = state.recipe;
         this.currentStep = state.currentStep;
         stepsRecyclerView.getLayoutManager().onRestoreInstanceState(state.stepsListLayoutState);
-        // TODO Restore Step/Ingredients details view's state
     }
 
     @Override

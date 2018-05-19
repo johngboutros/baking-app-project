@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.android.bakingapp.idlingResource;
+package com.example.android.bakingapp.utilities;
 
 import android.support.annotation.Nullable;
 import android.support.test.espresso.IdlingResource;

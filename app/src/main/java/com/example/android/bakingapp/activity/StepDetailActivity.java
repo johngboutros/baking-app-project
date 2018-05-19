@@ -82,7 +82,6 @@ public class StepDetailActivity extends AppCompatActivity {
             setup((List<Ingredient>) Parcels.unwrap(ingredientsArguments),
                     (Step) Parcels.unwrap(stepArgument));
         } else {
-            // TODO restore state and setup
             onRestoreInstanceState(savedInstanceState);
         }
     }
