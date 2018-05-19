@@ -82,7 +82,7 @@ public class StepListActivity extends AppCompatActivity implements View.OnClickL
         // Set title
         setTitle(this.recipe.getName());
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle(getTitle());
 
@@ -228,8 +228,8 @@ public class StepListActivity extends AppCompatActivity implements View.OnClickL
 
             ViewHolder(View view) {
                 super(view);
-                mIdView = (TextView) view.findViewById(R.id.id_text);
-                mContentView = (TextView) view.findViewById(R.id.content);
+                mIdView = view.findViewById(R.id.id_text);
+                mContentView = view.findViewById(R.id.content);
             }
         }
 

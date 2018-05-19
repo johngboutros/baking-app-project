@@ -13,7 +13,6 @@ import android.view.View;
 
 import com.example.android.bakingapp.R;
 import com.example.android.bakingapp.data.Ingredient;
-import com.example.android.bakingapp.data.Recipe;
 import com.example.android.bakingapp.data.Step;
 import com.example.android.bakingapp.fragment.StepDetailFragment;
 
@@ -48,7 +47,7 @@ public class StepDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_step_detail);
         ButterKnife.bind(this);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
+        Toolbar toolbar = findViewById(R.id.detail_toolbar);
         setSupportActionBar(toolbar);
 
         // Show the Up button in the action bar.

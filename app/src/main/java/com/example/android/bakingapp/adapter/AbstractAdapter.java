@@ -31,7 +31,7 @@ public abstract class AbstractAdapter<T, V extends RecyclerView.ViewHolder>
          *
          * @param item clicked item
          */
-        public void onClick(T item);
+        void onClick(T item);
     }
 
     /**
