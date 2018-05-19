@@ -18,6 +18,7 @@ import com.example.android.bakingapp.data.Recipe;
 import com.example.android.bakingapp.utilities.GsonRequest;
 import com.example.android.bakingapp.utilities.NetworkUtils;
 import com.example.android.bakingapp.utilities.RecipesUtils;
+import com.squareup.picasso.Picasso;
 
 import org.parceler.Parcels;
 
@@ -60,7 +61,7 @@ public class RecipeWidget extends AppWidgetProvider {
                                     R.layout.recipe_widget);
 
                             // Setup views
-                            setupViews(context, widgetRecipe, views);
+                            setupViews(context, widgetRecipe, views, appWidgetId);
 
                             // Instruct the widget manager to update the widget
                             appWidgetManager.updateAppWidget(appWidgetId, views);
@@ -78,9 +79,8 @@ public class RecipeWidget extends AppWidgetProvider {
         NetworkUtils.get(context).addToRequestQueue(recipesRequest);
     }
 
-    private static void setupViews(final Context context, Recipe recipe, RemoteViews views) {
-
-//        views.setTextViewText(R.id.appwidget_text, widgetRecipe.getName());
+    private static void setupViews(final Context context, Recipe recipe, RemoteViews views,
+                                   int appWidgetId) {
 
         String title = recipe.getName();
 
@@ -94,13 +94,12 @@ public class RecipeWidget extends AppWidgetProvider {
         if (TextUtils.isEmpty(recipe.getImage())) {
             views.setImageViewResource(R.id.recipe_image_iv, R.drawable.bg_recipe_thumb);
         } else {
-            // TODO load image into view
-//            holder.image.setContentDescription(title);
-//            Picasso.with(context).load(recipeImageUrl)
-//                    .fit()
-//                    .centerCrop()
-//                    .placeholder(ITEM_BACKGROUND_RES_ID)
-//                    .into(holder.image);
+            // TODO Test load image into RemoteViews
+            Picasso.with(context).load(recipe.getImage())
+                    .fit()
+                    .centerCrop()
+                    .placeholder(R.drawable.bg_recipe_thumb)
+                    .into(views, R.id.recipe_image_iv, new int[]{appWidgetId});
             // DEBUG: using Picasso.Listener to detect load failure
             //
             //        Picasso.Builder builder = new Picasso.Builder(context);
