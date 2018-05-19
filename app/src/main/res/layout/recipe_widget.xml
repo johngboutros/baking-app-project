@@ -1,0 +1,41 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/recipe_image_iv"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/widget_image_height"
+        android:scaleType="centerCrop"
+        tools:src="@drawable/bg_recipe_thumb" />
+
+    <TextView
+        android:id="@+id/recipe_title_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/recipe_title_margin"
+        android:layout_marginStart="@dimen/recipe_title_margin"
+        android:layout_marginTop="@dimen/recipe_title_margin"
+        android:gravity="start"
+        android:textSize="@dimen/widget_title_size"
+        android:textStyle="bold"
+        android:visibility="visible"
+        tools:text="Cheese Cake" />
+
+    <TextView
+        android:id="@+id/recipe_summary_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/recipe_title_margin"
+        android:layout_marginStart="@dimen/recipe_title_margin"
+        android:layout_marginTop="@dimen/recipe_title_margin"
+        android:gravity="start"
+        android:textSize="@dimen/widget_summary_size"
+        android:visibility="visible"
+        tools:text="@tools:sample/lorem/random" />
+
+</LinearLayout>

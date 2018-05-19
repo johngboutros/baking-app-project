@@ -6,6 +6,12 @@
     <string name="recipe_summary_template">Ingredients: %s</string>
     <string name="ingredient_quantity_template">%s \t%s</string>
     <string name="step_no_description">No description available.</string>
+    <string name="untitled_recipe">Untitled Recipe</string>
+    <string name="no_summary">No summary available!</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="configure">Configure</string>
+    <string name="add_widget">Add widget</string>
+    <string name="step_template">Step#%d. %s</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="title_step_list">Steps</string>

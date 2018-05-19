@@ -109,28 +109,22 @@ public class RecipesListAdapter extends AbstractAdapter<Recipe, RecipesListAdapt
                 String title = recipe.getName();
 
                 if (TextUtils.isEmpty(title)) {
-                    title = "Untitled Recipe";
+                    title = context.getString(R.string.untitled_recipe);
                 }
 
-                if (TextUtils.isEmpty(recipe.getImage())) {
+                holder.title.setText(title);
+                holder.summary.setText(getSummary(recipe));
 
-                    holder.title.setText(title);
-                    holder.summary.setText(getSummary(recipe));
+                if (TextUtils.isEmpty(recipe.getImage())) {
                     holder.image.setImageDrawable(context.getResources()
                             .getDrawable(ITEM_BACKGROUND_RES_ID));
-
-                    holder.loading.setVisibility(View.GONE);
-                    holder.image.setVisibility(View.VISIBLE);
-                    holder.title.setVisibility(View.VISIBLE);
-                    holder.summary.setVisibility(View.VISIBLE);
-
                 } else {
+                    holder.image.setContentDescription(title);
                     Picasso.with(context).load(recipeImageUrl)
                             .fit()
                             .centerCrop()
                             .placeholder(ITEM_BACKGROUND_RES_ID)
                             .into(holder.image);
-
                     // DEBUG: using Picasso.Listener to detect load failure
                     //
                     //        Picasso.Builder builder = new Picasso.Builder(context);
@@ -146,14 +140,12 @@ public class RecipesListAdapter extends AbstractAdapter<Recipe, RecipesListAdapt
                     //                .centerCrop()
                     //                .placeholder(ITEM_BACKGROUND_RES_ID)
                     //                .into(holder.image);
-
-                    holder.loading.setVisibility(View.GONE);
-                    holder.title.setVisibility(View.GONE);
-                    holder.summary.setVisibility(View.GONE);
-                    holder.image.setVisibility(View.VISIBLE);
-
-                    holder.image.setContentDescription(title);
                 }
+
+                holder.loading.setVisibility(View.GONE);
+                holder.image.setVisibility(View.VISIBLE);
+                holder.title.setVisibility(View.VISIBLE);
+                holder.summary.setVisibility(View.VISIBLE);
 
                 holder.card.setOnClickListener(new View.OnClickListener() {
                     @Override

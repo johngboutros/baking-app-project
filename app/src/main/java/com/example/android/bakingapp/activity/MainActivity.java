@@ -20,6 +20,7 @@ import com.example.android.bakingapp.R;
 import com.example.android.bakingapp.adapter.AbstractAdapter;
 import com.example.android.bakingapp.adapter.RecipesListAdapter;
 import com.example.android.bakingapp.data.Recipe;
+import com.example.android.bakingapp.utilities.RecipesUtils;
 import com.example.android.bakingapp.utilities.SimpleIdlingResource;
 import com.example.android.bakingapp.utilities.GsonRequest;
 import com.example.android.bakingapp.utilities.NetworkUtils;
@@ -143,8 +144,7 @@ public class MainActivity extends AppCompatActivity {
             recipesAdapter.startLoading();
         }
 
-        // TODO Replace hardcoded url
-        String url = "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json";
+        String url = RecipesUtils.RECIPES_URL;
 
         Request recipesRequest
                 = new GsonRequest<Recipe[]>(Request.Method.GET,
