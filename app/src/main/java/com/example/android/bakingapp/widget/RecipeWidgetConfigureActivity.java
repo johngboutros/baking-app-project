@@ -53,7 +53,8 @@ public class RecipeWidgetConfigureActivity extends Activity {
     private static final String PREFS_NAME = "com.example.android.bakingapp.widget.RecipeWidget";
     private static final String PREF_PREFIX_KEY = "appwidget_";
     int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
-    RecipesListAdapter.ItemClickListener<Recipe> mOnClickListener = new RecipesListAdapter.ItemClickListener<Recipe>() {
+    final RecipesListAdapter.ItemClickListener<Recipe> mOnClickListener =
+            new RecipesListAdapter.ItemClickListener<Recipe>() {
         public void onClick(Recipe recipe) {
             final Context context = RecipeWidgetConfigureActivity.this;
 
@@ -132,7 +133,6 @@ public class RecipeWidgetConfigureActivity extends Activity {
         // If this activity was started with an intent without an app widget ID, finish with an error.
         if (mAppWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
             finish();
-            return;
         }
 
     }
@@ -155,7 +155,7 @@ public class RecipeWidgetConfigureActivity extends Activity {
         String url = RecipesUtils.RECIPES_URL;
 
         Request recipesRequest
-                = new GsonRequest<Recipe[]>(Request.Method.GET,
+                = new GsonRequest<>(Request.Method.GET,
                 url,
                 null,
                 Recipe[].class,
@@ -167,7 +167,7 @@ public class RecipeWidgetConfigureActivity extends Activity {
                             isLoading = false;
                             recipesAdapter.stopLoading();
                         }
-                        Log.d(TAG, "Recipes: " + recipes);
+                        Log.d(TAG, "Recipes: " + Arrays.toString(recipes));
 
                         recipesAdapter.clear();
                         recipesAdapter.addAll(Arrays.asList(recipes));
@@ -189,7 +189,8 @@ public class RecipeWidgetConfigureActivity extends Activity {
                     }
                 });
 
-        NetworkUtils.get(RecipeWidgetConfigureActivity.this).addToRequestQueue(recipesRequest);
+        NetworkUtils.get(RecipeWidgetConfigureActivity.this).addToRequestQueue(this,
+                recipesRequest);
     }
 
 }

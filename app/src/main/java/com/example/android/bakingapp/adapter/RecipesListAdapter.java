@@ -25,6 +25,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
+ * {@link AbstractAdapter} with recipes list.
+ *
  * Created by john on 03/03/18.
  */
 
@@ -32,10 +34,8 @@ public class RecipesListAdapter extends AbstractAdapter<Recipe, RecipesListAdapt
 
     private static final String TAG = RecipesListAdapter.class.getSimpleName();
 
-    private static int ITEM_BACKGROUND_RES_ID = R.drawable.bg_recipe_thumb;
-
     // Discovered recipes list
-    private List<Recipe> recipes = new ArrayList<Recipe>();
+    private List<Recipe> recipes = new ArrayList<>();
 
     /**
      * ItemType could be used to view some items in a different way such as taking a whole row span
@@ -66,8 +66,10 @@ public class RecipesListAdapter extends AbstractAdapter<Recipe, RecipesListAdapt
      * @see #getItemViewType(int)
      * @see #onBindViewHolder(ViewHolder, int)
      */
+    @SuppressWarnings("JavadocReference")
+    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_recipe, parent, false);
 
@@ -94,8 +96,9 @@ public class RecipesListAdapter extends AbstractAdapter<Recipe, RecipesListAdapt
      *                 item at the given position in the data set.
      * @param position The position of the item within the adapter's data set.
      */
+    @SuppressWarnings("JavadocReference")
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
         final Recipe recipe = getItem(position);
 
@@ -115,15 +118,17 @@ public class RecipesListAdapter extends AbstractAdapter<Recipe, RecipesListAdapt
                 holder.title.setText(title);
                 holder.summary.setText(getSummary(recipe));
 
+                int thumbnailPlaceholderResId = R.drawable.bg_recipe_thumb;
+
                 if (TextUtils.isEmpty(recipe.getImage())) {
                     holder.image.setImageDrawable(context.getResources()
-                            .getDrawable(ITEM_BACKGROUND_RES_ID));
+                            .getDrawable(thumbnailPlaceholderResId));
                 } else {
                     holder.image.setContentDescription(title);
                     Picasso.with(context).load(recipeImageUrl)
                             .fit()
                             .centerCrop()
-                            .placeholder(ITEM_BACKGROUND_RES_ID)
+                            .placeholder(thumbnailPlaceholderResId)
                             .into(holder.image);
                     // DEBUG: using Picasso.Listener to detect load failure
                     //
@@ -248,17 +253,6 @@ public class RecipesListAdapter extends AbstractAdapter<Recipe, RecipesListAdapt
     }
 
     /**
-     * Called by RecyclerView when it stops observing this Adapter.
-     *
-     * @param recyclerView The RecyclerView instance which stopped observing this adapter.
-     * @see #onAttachedToRecyclerView(RecyclerView)
-     */
-    @Override
-    public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
-        super.onDetachedFromRecyclerView(recyclerView);
-    }
-
-    /**
      * Return the view type of the item at <code>position</code> for the purposes
      * of view recycling.
      * <p>
@@ -316,7 +310,7 @@ public class RecipesListAdapter extends AbstractAdapter<Recipe, RecipesListAdapt
      * position has been newly inserted. The item previously at position is now at position
      * position + 1.
      *
-     * @param recipe
+     * @param recipe to be added
      */
     public void add(Recipe recipe) {
         recipes.add(recipe);
@@ -326,7 +320,7 @@ public class RecipesListAdapter extends AbstractAdapter<Recipe, RecipesListAdapt
     /**
      * Adds recipes to the adapter.
      *
-     * @param recipes
+     * @param recipes to be added
      */
     public void addAll(List<Recipe> recipes) {
         for (Recipe recipe : recipes) {

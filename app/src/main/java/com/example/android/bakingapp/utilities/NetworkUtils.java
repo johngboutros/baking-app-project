@@ -17,8 +17,6 @@ import com.android.volley.toolbox.Volley;
 
 public final class NetworkUtils {
 
-    private Context context;
-
     /**
      * Static singleton instance
      */
@@ -48,9 +46,8 @@ public final class NetworkUtils {
         if (context == null)
             throw new IllegalArgumentException("Context must be provided");
 
-        this.context = context;
-        getRequestQueue();
-        getImageLoader();
+        getRequestQueue(context);
+        getImageLoader(context);
     }
 
     // NetworkUtils can't be initialized without args
@@ -77,7 +74,7 @@ public final class NetworkUtils {
      *
      * @return the singleton {@link RequestQueue} instance.
      */
-    public RequestQueue getRequestQueue() {
+    public RequestQueue getRequestQueue(Context context) {
         if (requestQueue == null) {
 
             // getApplicationContext() is key, it keeps you from leaking the
@@ -106,8 +103,8 @@ public final class NetworkUtils {
      * @param req Request to be added to the queue
      * @param <T> The type of parsed response this request expects.
      */
-    public <T> void addToRequestQueue(Request<T> req) {
-        getRequestQueue().add(req);
+    public <T> void addToRequestQueue(Context context, Request<T> req) {
+        getRequestQueue(context).add(req);
     }
 
     /**
@@ -115,12 +112,12 @@ public final class NetworkUtils {
      *
      * @return the singleton {@link ImageLoader} instance.
      */
-    public ImageLoader getImageLoader() {
+    public ImageLoader getImageLoader(Context context) {
         if (imageLoader == null) {
-            imageLoader = new ImageLoader(getRequestQueue(),
+            imageLoader = new ImageLoader(getRequestQueue(context),
                     new ImageLoader.ImageCache() {
                         private final LruCache<String, Bitmap>
-                                cache = new LruCache<String, Bitmap>(IMAGES_CACHE_MAX_SIZE);
+                                cache = new LruCache<>(IMAGES_CACHE_MAX_SIZE);
 
                         @Override
                         public Bitmap getBitmap(String url) {

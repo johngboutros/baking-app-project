@@ -30,6 +30,8 @@ import static com.example.android.bakingapp.utils.TestUtils.isScreenSw600dp;
 import static org.junit.Assume.assumeTrue;
 
 /**
+ * {@link StepListActivity} test.
+ *
  * Created by john on 13/05/18.
  */
 
@@ -42,7 +44,7 @@ public class StepListActivityTest {
 
     @Rule
     // third parameter is set to false which means the activity is not started automatically
-    public ActivityTestRule<StepListActivity> mActivityRule =
+    public final ActivityTestRule<StepListActivity> mActivityRule =
             new ActivityTestRule<>(StepListActivity.class, false, false);
 
     /**

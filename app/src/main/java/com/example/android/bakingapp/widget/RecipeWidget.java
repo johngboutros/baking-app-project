@@ -40,7 +40,7 @@ public class RecipeWidget extends AppWidgetProvider {
         String url = RecipesUtils.RECIPES_URL;
 
         Request recipesRequest
-                = new GsonRequest<Recipe[]>(Request.Method.GET,
+                = new GsonRequest<>(Request.Method.GET,
                 url,
                 null,
                 Recipe[].class,
@@ -76,7 +76,7 @@ public class RecipeWidget extends AppWidgetProvider {
                     }
                 });
 
-        NetworkUtils.get(context).addToRequestQueue(recipesRequest);
+        NetworkUtils.get(context).addToRequestQueue(context, recipesRequest);
     }
 
     private static void setupViews(final Context context, Recipe recipe, RemoteViews views,

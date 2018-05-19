@@ -1,6 +1,8 @@
 package com.example.android.bakingapp.utilities;
 
 /**
+ * Recipes utils.
+ *
  * Created by john on 19/05/18.
  */
 

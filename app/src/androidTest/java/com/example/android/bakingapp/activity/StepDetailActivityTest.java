@@ -23,6 +23,8 @@ import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 
 /**
+ * {@link StepDetailActivity} test.
+ *
  * Created by john on 13/05/18.
  */
 
@@ -35,7 +37,7 @@ public class StepDetailActivityTest {
 
     @Rule
     // third parameter is set to false which means the activity is not started automatically
-    public IntentsTestRule<StepDetailActivity> mActivityRule = new IntentsTestRule<>(
+    public final IntentsTestRule<StepDetailActivity> mActivityRule = new IntentsTestRule<>(
             StepDetailActivity.class, false, false);
 
     /**
@@ -65,33 +67,4 @@ public class StepDetailActivityTest {
         // Check that the steps list is displayed
         onView(withId(R.id.ingredients_container_ll)).check(matches(isDisplayed()));
     }
-
-//    @Test
-//    public void checkStepNavigation() {
-//
-//        List<Step> steps = testRecipe.getSteps();
-//
-//        for (Step step : steps) {
-//            // Click on next button
-//            onView(withId(R.id.fab)).perform(click());
-//            // Check step is displayed correctly
-////            onView(allOf(instanceOf(TextView.class), withParent(withId(R.id.toolbar))))
-////                    .check(matches(withText(step.getShortDescription())));
-//            onView(withId(R.id.step_header_tv)).check(matches(withText(step.getShortDescription())));
-//            onView(withId(R.id.step_content_tv)).check(matches(withText(step.getDescription())));
-//        }
-//
-//        // Finally click up to go back to step list
-//        onView(withId(R.id.fab)).perform(click());
-//        // FIXME Check for intend to StepListActivitty
-//        intended(isInternal());
-////        intended(allOf(hasComponent(hasClassName(StepListActivity.class.getName()))));
-////        intended(toPackage(StepListActivity.class.getPackage().getName()));
-////        intended(hasComponent(StepListActivity.class));
-//
-//        // Check that the steps list is displayed
-////        onView(withId(R.id.step_list)).check(matches(isDisplayed()));
-//
-//
-//    }
 }

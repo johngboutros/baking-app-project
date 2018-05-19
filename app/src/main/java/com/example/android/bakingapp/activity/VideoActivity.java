@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -155,7 +154,7 @@ public class VideoActivity extends AppCompatActivity {
     /**
      * Initializes the player and plays the given url.
      *
-     * @param videoURL
+     * @param videoURL to be played
      */
     private void setupPlayer(String videoURL) {
 

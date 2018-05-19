@@ -33,7 +33,7 @@ public class SimpleIdlingResource implements IdlingResource {
     @Nullable private volatile ResourceCallback mCallback;
 
     // Idleness is controlled with this boolean.
-    private AtomicBoolean mIsIdleNow = new AtomicBoolean(true);
+    private final AtomicBoolean mIsIdleNow = new AtomicBoolean(true);
 
     @Override
     public String getName() {

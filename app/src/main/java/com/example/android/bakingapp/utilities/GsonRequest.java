@@ -5,6 +5,7 @@ import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.Response;
+import com.android.volley.ResponseDelivery;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.google.gson.Gson;
@@ -14,13 +15,15 @@ import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 /**
+ * {@link Request} for json that can be parsed to a class T
+ *
  * Created by john on 10/03/18.
  */
 
 public class GsonRequest<T> extends Request<T> {
 
     /** Default charset for JSON request. */
-    protected static final String PROTOCOL_CHARSET = "utf-8";
+    private static final String PROTOCOL_CHARSET = "utf-8";
 
     /** Content type for request. */
     private static final String PROTOCOL_CONTENT_TYPE =

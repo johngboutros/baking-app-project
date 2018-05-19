@@ -13,7 +13,7 @@ import android.support.v7.widget.RecyclerView;
 
 public abstract class PaginationScrollListener extends RecyclerView.OnScrollListener {
 
-    LinearLayoutManager layoutManager;
+    private final LinearLayoutManager layoutManager;
 
     public PaginationScrollListener(LinearLayoutManager layoutManager) {
         this.layoutManager = layoutManager;
@@ -31,10 +31,10 @@ public abstract class PaginationScrollListener extends RecyclerView.OnScrollList
             if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
                     && firstVisibleItemPosition >= 0) {
 
-                // FIX: Cannot call this method in a scroll callback. Scroll callbacks mightbe run
-                // during a measure & layout pass where you cannot change theRecyclerView data.
-                // Any method call that might change the structureof the RecyclerView or the
-                // adapter contents should be postponed tothe next frame.
+                // FIX: Cannot call this method in a scroll callback. Scroll callbacks might be run
+                // during a measure & layout pass where you cannot change the RecyclerView data.
+                // Any method call that might change the structure of the RecyclerView or the
+                // adapter contents should be postponed to the next frame.
                 recyclerView.post(new Runnable() {
                     public void run() {
                         loadMoreItems();

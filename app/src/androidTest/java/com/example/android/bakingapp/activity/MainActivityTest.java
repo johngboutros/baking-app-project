@@ -22,6 +22,8 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static com.example.android.bakingapp.utils.TestUtils.RecyclerViewMatcher.atPosition;
 
 /**
+ * {@link MainActivity} test.
+ *
  * Created by john on 13/05/18.
  */
 
@@ -29,7 +31,7 @@ import static com.example.android.bakingapp.utils.TestUtils.RecyclerViewMatcher.
 public class MainActivityTest {
 
     @Rule
-    public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
+    public final ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
 
     // Registers any resource that needs to be synchronized with Espresso before
     // the test is run.

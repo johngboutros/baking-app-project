@@ -7,18 +7,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * {@link RecyclerView.Adapter} with item click listeners.
+ *
  * Created by john on 10/04/18.
  */
 
 public abstract class AbstractAdapter<T, V extends RecyclerView.ViewHolder>
         extends RecyclerView.Adapter<V> {
 
-    protected final Context context;
+    final Context context;
 
     // Registered Click Listeners
-    private List<ItemClickListener> itemClickListeners = new ArrayList<ItemClickListener>();
+    private final List<ItemClickListener> itemClickListeners = new ArrayList<>();
 
-    protected AbstractAdapter(Context context) {
+    AbstractAdapter(Context context) {
         this.context = context;
     }
 
@@ -37,7 +39,7 @@ public abstract class AbstractAdapter<T, V extends RecyclerView.ViewHolder>
     /**
      * Registers a ItemClickListener
      *
-     * @param listener
+     * @param listener ItemClickListener
      */
     public void addItemClickListener(ItemClickListener listener) {
         itemClickListeners.add(listener);
@@ -46,13 +48,13 @@ public abstract class AbstractAdapter<T, V extends RecyclerView.ViewHolder>
     /**
      * Unregisters a ItemClickListener
      *
-     * @param listener
+     * @param listener ItemClickListener
      */
     public void removeItemClickListener(ItemClickListener listener) {
         itemClickListeners.remove(listener);
     }
 
-    protected List<ItemClickListener> getItemClickListeners() {
+    List<ItemClickListener> getItemClickListeners() {
         return itemClickListeners;
     }
 

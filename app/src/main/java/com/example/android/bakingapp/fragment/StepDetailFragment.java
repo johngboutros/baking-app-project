@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
@@ -118,7 +119,7 @@ public class StepDetailFragment extends Fragment implements Player.EventListener
     /**
      * Starts video in full screen.
      *
-     * @param videoUrl
+     * @param videoUrl to be started in full-screen
      */
     private void goFullscreenVideo(String videoUrl) {
         Intent i = new Intent(getContext(), VideoActivity.class);
@@ -127,7 +128,7 @@ public class StepDetailFragment extends Fragment implements Player.EventListener
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = null;
 
@@ -265,6 +266,7 @@ public class StepDetailFragment extends Fragment implements Player.EventListener
      * @param playWhenReady Whether playback will proceed when ready.
      * @param playbackState One of the {@code STATE} constants.
      */
+    @SuppressWarnings("JavadocReference")
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
         if (playbackState == Player.STATE_READY) {
@@ -282,7 +284,7 @@ public class StepDetailFragment extends Fragment implements Player.EventListener
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         SavedInstanceState state = new SavedInstanceState();
         state.title = this.mTitle;

@@ -3,15 +3,17 @@ package com.example.android.bakingapp.data;
 import org.parceler.Parcel;
 
 /**
+ * {@link Recipe} Ingredient bean.
+ *
  * Created by john on 06/05/18.
  */
 
 @Parcel
 public class Ingredient {
 
-    float quantity;
-    String measure;
-    String ingredient;
+    private float quantity;
+    private String measure;
+    private String ingredient;
 
     public float getQuantity() {
         return quantity;

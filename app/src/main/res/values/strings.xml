@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">BakingApp</string>
-    <string name="recipes_load_error">Couldn\'t load recipes</string>
+    <string name="recipes_load_error">Could not load recipes</string>
     <string name="ingredients_label">Ingredients</string>
     <string name="show_ingredients">See ingredients</string>
     <string name="recipe_summary_template">Ingredients: %s</string>

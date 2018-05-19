@@ -5,18 +5,20 @@ import org.parceler.Parcel;
 import java.util.List;
 
 /**
+ * Recipe bean.
+ *
  * Created by john on 06/05/18.
  */
 
 @Parcel
 public class Recipe {
 
-    Long id;
-    String name;
-    List<Ingredient> ingredients;
-    List<Step> steps;
-    int servings;
-    String image;
+    private Long id;
+    private String name;
+    private List<Ingredient> ingredients;
+    private List<Step> steps;
+    private int servings;
+    private String image;
 
     public Long getId() {
         return id;
