@@ -141,12 +141,6 @@ public class StepDetailFragment extends Fragment implements Player.EventListener
         return rootView;
     }
 
-    @Override
-    public void onDestroyView() {
-        releasePlayer();
-        super.onDestroyView();
-    }
-
     private ViewGroup getIngredientsLayout(LayoutInflater inflater, ViewGroup container, List<Ingredient> ingredients) {
         int layoutResId = R.layout.fragment_step_detail_ingredients;
 
@@ -188,15 +182,6 @@ public class StepDetailFragment extends Fragment implements Player.EventListener
         mPlayerView = layout.findViewById(R.id.step_video_pv);
         mPlayerLoading = layout.findViewById(R.id.step_video_loading_pb);
 
-        if (!TextUtils.isEmpty(step.getVideoURL())) {
-            // Setup player
-            mPlayerLoading.setVisibility(View.VISIBLE);
-            setupPlayer(mPlayerView, step.getId(), step.getVideoURL());
-        } else {
-            // Hide player
-            mPlayerView.setVisibility(View.GONE);
-        }
-
         TextView contentTv = layout.findViewById(R.id.step_content_tv);
         if (!TextUtils.isEmpty(step.getDescription())) {
             contentTv.setText(step.getDescription());
@@ -208,24 +193,46 @@ public class StepDetailFragment extends Fragment implements Player.EventListener
         return layout;
     }
 
-    private void setupPlayer(PlayerView playerView, int stepId, String videoURL) {
+    @Override
+    public void onResume() {
+        super.onResume();
+        setupPlayer(mPlayerView, mStep.getVideoURL());
+    }
 
-        Uri uri = Uri.parse(videoURL);
+    @Override
+    public void onPause() {
+        super.onPause();
+        releasePlayer();
+    }
 
-        TrackSelector trackSelector = new DefaultTrackSelector();
-        mExoPlayer = ExoPlayerFactory.newSimpleInstance(getContext(), trackSelector);
-        playerView.setPlayer(mExoPlayer);
+    private void setupPlayer(PlayerView playerView, String videoURL) {
 
-        // Set the ExoPlayer.EventListener to this activity.
-        mExoPlayer.addListener(this);
+        if (!TextUtils.isEmpty(videoURL)) {
+            // Setup player
+            mPlayerLoading.setVisibility(View.VISIBLE);
+            mPlayerView.setVisibility(View.GONE);
 
-        // Prepare the MediaSource.
-        String userAgent = Util.getUserAgent(getContext(), getString(R.string.app_name));
-        MediaSource mediaSource = new ExtractorMediaSource
-                .Factory(new DefaultDataSourceFactory(getContext(), userAgent))
-                .createMediaSource(uri);
-        mExoPlayer.prepare(mediaSource);
-        mExoPlayer.setPlayWhenReady(true);
+            Uri uri = Uri.parse(videoURL);
+
+            TrackSelector trackSelector = new DefaultTrackSelector();
+            mExoPlayer = ExoPlayerFactory.newSimpleInstance(getContext(), trackSelector);
+            playerView.setPlayer(mExoPlayer);
+
+            // Set the ExoPlayer.EventListener to this activity.
+            mExoPlayer.addListener(this);
+
+            // Prepare the MediaSource.
+            String userAgent = Util.getUserAgent(getContext(), getString(R.string.app_name));
+            MediaSource mediaSource = new ExtractorMediaSource
+                    .Factory(new DefaultDataSourceFactory(getContext(), userAgent))
+                    .createMediaSource(uri);
+            mExoPlayer.prepare(mediaSource);
+            mExoPlayer.setPlayWhenReady(true);
+
+        } else {
+            // Hide player
+            mPlayerView.setVisibility(View.GONE);
+        }
     }
 
     private void releasePlayer() {

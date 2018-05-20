@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (!isLoading) {
             isLoading = true;
-            setIdlingResource(!true);
+            setIdlingResource(false);
             recipesAdapter.startLoading();
         }
 

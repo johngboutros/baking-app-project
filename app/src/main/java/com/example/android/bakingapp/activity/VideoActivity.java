@@ -119,10 +119,6 @@ public class VideoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_video);
         ButterKnife.bind(this);
 
-        // Acquire data
-        String videoUrl = getIntent().getStringExtra(ARG_VIDEO_URL);
-        setupPlayer(videoUrl);
-
         mVisible = true;
         mControlsView = findViewById(R.id.fullscreen_content_controls);
         mContentView = mPlayerView;//findViewById(R.id.fullscreen_content);
@@ -140,6 +136,21 @@ public class VideoActivity extends AppCompatActivity {
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
         findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Acquire data
+        String videoUrl = getIntent().getStringExtra(ARG_VIDEO_URL);
+        // Setup player and play video
+        setupPlayer(videoUrl);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        releasePlayer();
     }
 
     @Override
