@@ -54,9 +54,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean isLoading;
 
     // Saved instance state Bundle keys
-//    private final static String LAYOUT_STATE_BUNDLE_KEY = "layout_state";
     private final static String SAVED_STATE_BUNDLE_KEY = "saved_state";
-//    private final static String TITLE_BUNDLE_KEY = "title";
 
     // Recipes Adapter
     private RecipesListAdapter recipesAdapter;
