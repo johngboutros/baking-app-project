@@ -78,6 +78,12 @@ public class StepDetailFragment extends Fragment implements Player.EventListener
     private View mPlayerLoading;
 
     /**
+     * ExoPLayer state
+     */
+    private Boolean mIsPlaying;
+    private Long mPlayerPosition;
+
+    /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
@@ -194,14 +200,14 @@ public class StepDetailFragment extends Fragment implements Player.EventListener
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onStart() {
+        super.onStart();
         setupPlayer(mPlayerView, mStep.getVideoURL());
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
+    public void onStop() {
+        super.onStop();
         releasePlayer();
     }
 
@@ -227,7 +233,13 @@ public class StepDetailFragment extends Fragment implements Player.EventListener
                     .Factory(new DefaultDataSourceFactory(getContext(), userAgent))
                     .createMediaSource(uri);
             mExoPlayer.prepare(mediaSource);
-            mExoPlayer.setPlayWhenReady(true);
+            // Restore player state
+            mExoPlayer.setPlayWhenReady(mIsPlaying == null ? true : mIsPlaying);
+            // Restore player position
+            if (mPlayerPosition != null) {
+                mExoPlayer.seekTo(mPlayerPosition);
+                mPlayerPosition = null;
+            }
 
         } else {
             // Hide player
@@ -279,6 +291,7 @@ public class StepDetailFragment extends Fragment implements Player.EventListener
         if (playbackState == Player.STATE_READY) {
             mPlayerLoading.setVisibility(View.GONE);
             mPlayerView.setVisibility(View.VISIBLE);
+            mIsPlaying = playWhenReady;
         }
     }
 
@@ -288,6 +301,8 @@ public class StepDetailFragment extends Fragment implements Player.EventListener
     @Parcel
     static class SavedInstanceState {
         String title;
+        Long playerPosition;
+        Boolean isPlaying;
     }
 
     @Override
@@ -295,6 +310,11 @@ public class StepDetailFragment extends Fragment implements Player.EventListener
         super.onSaveInstanceState(outState);
         SavedInstanceState state = new SavedInstanceState();
         state.title = this.mTitle;
+        if (mExoPlayer != null) {
+            mPlayerPosition = mExoPlayer.getCurrentPosition();
+            state.playerPosition = mPlayerPosition;
+            state.isPlaying = mIsPlaying;
+        }
         outState.putParcelable(STATE_BUNDLE_KEY, Parcels.wrap(state));
     }
 
@@ -305,6 +325,8 @@ public class StepDetailFragment extends Fragment implements Player.EventListener
         SavedInstanceState state = Parcels.unwrap(savedInstanceState
                 .getParcelable(STATE_BUNDLE_KEY));
         this.mTitle = state.title;
+        this.mIsPlaying = state.isPlaying;
+        this.mPlayerPosition = state.playerPosition;
         setupTitle(mTitle);
     }
 
