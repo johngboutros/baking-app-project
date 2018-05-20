@@ -54,8 +54,7 @@ public class StepListActivityTest {
      * @return test data
      */
     private static Recipe[] getTestRecipes() {
-        String json = TestUtils.loadJSONFromUrl(InstrumentationRegistry.getContext(),
-                RecipesUtils.RECIPES_URL);
+        String json = TestUtils.loadJSONFromUrl(RecipesUtils.RECIPES_URL);
         Gson gson = new Gson();
         return gson.fromJson(json, Recipe[].class);
     }
