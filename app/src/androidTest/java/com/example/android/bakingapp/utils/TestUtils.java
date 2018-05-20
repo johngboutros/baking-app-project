@@ -14,6 +14,7 @@ import org.hamcrest.Matcher;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 
 import static android.support.test.internal.util.Checks.checkNotNull;
 
@@ -78,9 +79,30 @@ public class TestUtils {
      *  }
      */
     public static String loadJSONFromAsset(Context context, String jsonFilename) {
+        InputStream is = null;
+        try {
+            is = context.getAssets().open(jsonFilename);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return loadJSON(context, is);
+    }
+
+    public static String loadJSONFromUrl(Context context, String url) {
+        InputStream is = null;
+        try {
+            is = new URL(url).openStream();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return loadJSON(context, is);
+    }
+
+    private static String loadJSON(Context context, InputStream is) {
         String json;
         try {
-            InputStream is = context.getAssets().open(jsonFilename);
             int size = is.available();
             byte[] buffer = new byte[size];
             is.read(buffer);

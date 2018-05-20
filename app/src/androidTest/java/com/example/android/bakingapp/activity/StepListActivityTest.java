@@ -8,6 +8,7 @@ import android.support.test.runner.AndroidJUnit4;
 import com.example.android.bakingapp.R;
 import com.example.android.bakingapp.data.Recipe;
 import com.example.android.bakingapp.data.Step;
+import com.example.android.bakingapp.utilities.RecipesUtils;
 import com.example.android.bakingapp.utils.TestUtils;
 import com.google.gson.Gson;
 
@@ -53,7 +54,8 @@ public class StepListActivityTest {
      * @return test data
      */
     private static Recipe[] getTestRecipes() {
-        String json = TestUtils.loadJSONFromAsset(InstrumentationRegistry.getContext(), JSON_FILENAME);
+        String json = TestUtils.loadJSONFromUrl(InstrumentationRegistry.getContext(),
+                RecipesUtils.RECIPES_URL);
         Gson gson = new Gson();
         return gson.fromJson(json, Recipe[].class);
     }
