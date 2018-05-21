@@ -100,6 +100,10 @@ public class StepDetailFragment extends Fragment implements Player.EventListener
             // to load content from a content provider.
             mStep = Parcels.unwrap(getArguments().getParcelable(ARG_STEP));
             mTitle = mStep.getShortDescription();
+            // Force restore state now
+            if (savedInstanceState != null) {
+                onActivityCreated(savedInstanceState);
+            }
             // Start video in fullscreen IF exists AND landscape AND phone
             boolean tabletMode = getActivity().findViewById(R.id.step_list) != null;
             if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE
@@ -130,6 +134,12 @@ public class StepDetailFragment extends Fragment implements Player.EventListener
     private void goFullscreenVideo(String videoUrl) {
         Intent i = new Intent(getContext(), VideoActivity.class);
         i.putExtra(VideoActivity.ARG_VIDEO_URL, videoUrl);
+        if (mIsPlaying != null) {
+            i.putExtra(VideoActivity.ARG_PLAYER_PLAYING, mIsPlaying);
+        }
+        if (mPlayerPosition != null) {
+            i.putExtra(VideoActivity.ARG_PLAYER_POSITION, mPlayerPosition);
+        }
         getActivity().startActivity(i);
     }
 
@@ -202,7 +212,7 @@ public class StepDetailFragment extends Fragment implements Player.EventListener
     @Override
     public void onStart() {
         super.onStart();
-        setupPlayer(mPlayerView, mStep.getVideoURL());
+        setupPlayer(mStep.getVideoURL());
     }
 
     @Override
@@ -211,7 +221,7 @@ public class StepDetailFragment extends Fragment implements Player.EventListener
         releasePlayer();
     }
 
-    private void setupPlayer(PlayerView playerView, String videoURL) {
+    private void setupPlayer(String videoURL) {
 
         if (!TextUtils.isEmpty(videoURL)) {
             // Setup player
@@ -222,7 +232,7 @@ public class StepDetailFragment extends Fragment implements Player.EventListener
 
             TrackSelector trackSelector = new DefaultTrackSelector();
             mExoPlayer = ExoPlayerFactory.newSimpleInstance(getContext(), trackSelector);
-            playerView.setPlayer(mExoPlayer);
+            mPlayerView.setPlayer(mExoPlayer);
 
             // Set the ExoPlayer.EventListener to this activity.
             mExoPlayer.addListener(this);
@@ -321,13 +331,14 @@ public class StepDetailFragment extends Fragment implements Player.EventListener
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (savedInstanceState == null) return;
-        SavedInstanceState state = Parcels.unwrap(savedInstanceState
-                .getParcelable(STATE_BUNDLE_KEY));
-        this.mTitle = state.title;
-        this.mIsPlaying = state.isPlaying;
-        this.mPlayerPosition = state.playerPosition;
-        setupTitle(mTitle);
+        if (savedInstanceState != null) {
+            SavedInstanceState state = Parcels.unwrap(savedInstanceState
+                    .getParcelable(STATE_BUNDLE_KEY));
+            this.mTitle = state.title;
+            this.mIsPlaying = state.isPlaying;
+            this.mPlayerPosition = state.playerPosition;
+            setupTitle(mTitle);
+        }
     }
 
     @Override

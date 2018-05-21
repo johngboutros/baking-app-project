@@ -5,21 +5,34 @@ import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
 
 import com.example.android.bakingapp.R;
+import com.example.android.bakingapp.fragment.StepDetailFragment;
+import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.PlaybackParameters;
+import com.google.android.exoplayer2.Player;
+import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+
+import org.parceler.Parcel;
+import org.parceler.Parcels;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -28,7 +41,14 @@ import butterknife.ButterKnife;
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-public class VideoActivity extends AppCompatActivity {
+public class VideoActivity extends AppCompatActivity implements Player.EventListener {
+
+    private static final String STATE_BUNDLE_KEY = VideoActivity.class.getSimpleName()
+            + "_state_bundle_key";
+
+    // Player state args
+    public static final String ARG_PLAYER_PLAYING = "player_playing";
+    public static final String ARG_PLAYER_POSITION = "player_position";
 
     /**
      * ExoPlayer
@@ -36,6 +56,12 @@ public class VideoActivity extends AppCompatActivity {
     private ExoPlayer mExoPlayer;
     @BindView(R.id.player_pv)
     PlayerView mPlayerView;
+
+    /**
+     * ExoPLayer state
+     */
+    private Boolean mIsPlaying;
+    private Long mPlayerPosition;
 
     /**
      * Video param
@@ -121,7 +147,13 @@ public class VideoActivity extends AppCompatActivity {
 
         mVisible = true;
         mControlsView = findViewById(R.id.fullscreen_content_controls);
+
+        // TODO remove mContentView
         mContentView = mPlayerView;//findViewById(R.id.fullscreen_content);
+
+        // Try to restore player state from intent
+        mIsPlaying = getIntent().getBooleanExtra(ARG_PLAYER_PLAYING, true);
+        mPlayerPosition = getIntent().getLongExtra(ARG_PLAYER_POSITION, 0);
 
 
         // Set up the user interaction to manually show or hide the system UI.
@@ -161,6 +193,37 @@ public class VideoActivity extends AppCompatActivity {
             finish();
         }
     }
+    /**
+     * A class to save the adapter's state
+     */
+    @Parcel
+    static class SavedInstanceState {
+        Long playerPosition;
+        Boolean isPlaying;
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        SavedInstanceState state = new SavedInstanceState();
+        if (mExoPlayer != null) {
+            mPlayerPosition = mExoPlayer.getCurrentPosition();
+            state.playerPosition = mPlayerPosition;
+            state.isPlaying = mIsPlaying;
+        }
+        outState.putParcelable(STATE_BUNDLE_KEY, Parcels.wrap(state));
+    }
+
+    @Override
+    public void onRestoreInstanceState(@Nullable Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        if (savedInstanceState == null) return;
+        SavedInstanceState state = Parcels.unwrap(savedInstanceState
+                .getParcelable(STATE_BUNDLE_KEY));
+        this.mIsPlaying = state.isPlaying;
+        this.mPlayerPosition = state.playerPosition;
+    }
+
 
     /**
      * Initializes the player and plays the given url.
@@ -169,22 +232,32 @@ public class VideoActivity extends AppCompatActivity {
      */
     private void setupPlayer(String videoURL) {
 
-        Uri uri = Uri.parse(videoURL);
+        if (!TextUtils.isEmpty(videoURL)) {
+            // Setup player
+            Uri uri = Uri.parse(videoURL);
 
-        TrackSelector trackSelector = new DefaultTrackSelector();
-        mExoPlayer = ExoPlayerFactory.newSimpleInstance(this, trackSelector);
-        mPlayerView.setPlayer(mExoPlayer);
+            TrackSelector trackSelector = new DefaultTrackSelector();
+            mExoPlayer = ExoPlayerFactory.newSimpleInstance(this, trackSelector);
+            mPlayerView.setPlayer(mExoPlayer);
 
-        // Set the ExoPlayer.EventListener to this activity.
-//        mExoPlayer.addListener(this);
+            // Set the ExoPlayer.EventListener to this activity.
+            mExoPlayer.addListener(this);
 
-        // Prepare the MediaSource.
-        String userAgent = Util.getUserAgent(this, getString(R.string.app_name));
-        MediaSource mediaSource = new ExtractorMediaSource
-                .Factory(new DefaultDataSourceFactory(this, userAgent))
-                .createMediaSource(uri);
-        mExoPlayer.prepare(mediaSource);
-        mExoPlayer.setPlayWhenReady(true);
+            // Prepare the MediaSource.
+            String userAgent = Util.getUserAgent(this, getString(R.string.app_name));
+            MediaSource mediaSource = new ExtractorMediaSource
+                    .Factory(new DefaultDataSourceFactory(this, userAgent))
+                    .createMediaSource(uri);
+            mExoPlayer.prepare(mediaSource);
+            // Restore player state
+            mExoPlayer.setPlayWhenReady(mIsPlaying == null ? true : mIsPlaying);
+            // Restore player position
+            if (mPlayerPosition != null) {
+                mExoPlayer.seekTo(mPlayerPosition);
+                mPlayerPosition = null;
+            }
+
+        }
     }
 
     /**
@@ -249,5 +322,56 @@ public class VideoActivity extends AppCompatActivity {
     private void delayedHide(int delayMillis) {
         mHideHandler.removeCallbacks(mHideRunnable);
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
+    }
+
+    /**
+     * Called when the value returned from either {@link #getPlayWhenReady()} or
+     * {@link #getPlaybackState()} changes.
+     *
+     * @param playWhenReady Whether playback will proceed when ready.
+     * @param playbackState One of the {@code STATE} constants.
+     */
+    @SuppressWarnings("JavadocReference")
+    @Override
+    public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+        if (playbackState == Player.STATE_READY) {
+            mIsPlaying = playWhenReady;
+        }
+    }
+
+    @Override
+    public void onRepeatModeChanged(int repeatMode) {
+    }
+
+    @Override
+    public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled) {
+    }
+
+    @Override
+    public void onTimelineChanged(Timeline timeline, Object manifest, int reason) {
+    }
+
+    @Override
+    public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
+    }
+
+    @Override
+    public void onLoadingChanged(boolean isLoading) {
+    }
+
+    @Override
+    public void onPlayerError(ExoPlaybackException error) {
+    }
+
+    @Override
+    public void onPositionDiscontinuity(int reason) {
+    }
+
+    @Override
+    public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
+    }
+
+    @Override
+    public void onSeekProcessed() {
     }
 }
