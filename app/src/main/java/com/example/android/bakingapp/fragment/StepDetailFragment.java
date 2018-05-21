@@ -228,7 +228,9 @@ public class StepDetailFragment extends Fragment implements Player.EventListener
     @Override
     public void onStart() {
         super.onStart();
-        setupPlayer(mStep.getVideoURL());
+        if (mStep != null) {
+            setupPlayer(mStep.getVideoURL());
+        }
     }
 
     @Override
