@@ -1,6 +1,8 @@
 package com.example.android.bakingapp.activity;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
@@ -190,9 +192,20 @@ public class VideoActivity extends AppCompatActivity implements Player.EventList
         super.onConfigurationChanged(newConfig);
         // Stop activity if portrait orientation
         if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            finish();
+            goBackWithResult();
         }
     }
+
+    private void goBackWithResult() {
+        Intent returnIntent = new Intent();
+        if (mExoPlayer != null) {
+            returnIntent.putExtra(ARG_PLAYER_PLAYING, mIsPlaying);
+            returnIntent.putExtra(ARG_PLAYER_POSITION, mExoPlayer.getCurrentPosition());
+        }
+        setResult(Activity.RESULT_OK, returnIntent);
+        finish();
+    }
+
     /**
      * A class to save the adapter's state
      */

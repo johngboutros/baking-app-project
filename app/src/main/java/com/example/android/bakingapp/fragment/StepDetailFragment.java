@@ -63,6 +63,9 @@ public class StepDetailFragment extends Fragment implements Player.EventListener
     public static final String ARG_STEP = "step";
     public static final String ARG_INGREDIENTS = "ingredients";
 
+    // Request code for result from fullscreen activity
+    private static final int FULL_SCREEN_REQUEST = 56;
+
     /**
      * The content this fragment is presenting (either a step or ingredients).
      */
@@ -140,7 +143,20 @@ public class StepDetailFragment extends Fragment implements Player.EventListener
         if (mPlayerPosition != null) {
             i.putExtra(VideoActivity.ARG_PLAYER_POSITION, mPlayerPosition);
         }
-        getActivity().startActivity(i);
+        startActivityForResult(i, FULL_SCREEN_REQUEST);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (FULL_SCREEN_REQUEST == requestCode && Activity.RESULT_OK == resultCode) {
+            mIsPlaying = data.getBooleanExtra(VideoActivity.ARG_PLAYER_PLAYING, true);
+            mPlayerPosition = data.getLongExtra(VideoActivity.ARG_PLAYER_POSITION, 0);
+            if (mExoPlayer != null) {
+                mExoPlayer.setPlayWhenReady(mIsPlaying);
+                mExoPlayer.seekTo(mPlayerPosition);
+            }
+        }
     }
 
     @Override
