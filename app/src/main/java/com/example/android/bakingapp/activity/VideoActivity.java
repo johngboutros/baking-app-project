@@ -171,8 +171,8 @@ public class VideoActivity extends AppCompatActivity implements Player.EventList
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    public void onStart() {
+        super.onStart();
         // Acquire data
         String videoUrl = getIntent().getStringExtra(ARG_VIDEO_URL);
         // Setup player and play video
@@ -180,8 +180,8 @@ public class VideoActivity extends AppCompatActivity implements Player.EventList
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    public void onStop() {
+        super.onStop();
         releasePlayer();
     }
 
