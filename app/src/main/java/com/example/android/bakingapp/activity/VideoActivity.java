@@ -43,7 +43,7 @@ import butterknife.ButterKnife;
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-public class VideoActivity extends AppCompatActivity implements Player.EventListener {
+public class VideoActivity extends AppCompatActivity {
 
     private static final String STATE_BUNDLE_KEY = VideoActivity.class.getSimpleName()
             + "_state_bundle_key";
@@ -199,11 +199,16 @@ public class VideoActivity extends AppCompatActivity implements Player.EventList
     private void goBackWithResult() {
         Intent returnIntent = new Intent();
         if (mExoPlayer != null) {
-            returnIntent.putExtra(ARG_PLAYER_PLAYING, mIsPlaying);
+            returnIntent.putExtra(ARG_PLAYER_PLAYING, mExoPlayer.getPlayWhenReady());
             returnIntent.putExtra(ARG_PLAYER_POSITION, mExoPlayer.getCurrentPosition());
         }
         setResult(Activity.RESULT_OK, returnIntent);
         finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        goBackWithResult();
     }
 
     /**
@@ -221,6 +226,7 @@ public class VideoActivity extends AppCompatActivity implements Player.EventList
         SavedInstanceState state = new SavedInstanceState();
         if (mExoPlayer != null) {
             mPlayerPosition = mExoPlayer.getCurrentPosition();
+            mIsPlaying = mExoPlayer.getPlayWhenReady();
             state.playerPosition = mPlayerPosition;
             state.isPlaying = mIsPlaying;
         }
@@ -252,9 +258,6 @@ public class VideoActivity extends AppCompatActivity implements Player.EventList
             TrackSelector trackSelector = new DefaultTrackSelector();
             mExoPlayer = ExoPlayerFactory.newSimpleInstance(this, trackSelector);
             mPlayerView.setPlayer(mExoPlayer);
-
-            // Set the ExoPlayer.EventListener to this activity.
-            mExoPlayer.addListener(this);
 
             // Prepare the MediaSource.
             String userAgent = Util.getUserAgent(this, getString(R.string.app_name));
@@ -335,56 +338,5 @@ public class VideoActivity extends AppCompatActivity implements Player.EventList
     private void delayedHide(int delayMillis) {
         mHideHandler.removeCallbacks(mHideRunnable);
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
-    }
-
-    /**
-     * Called when the value returned from either {@link #getPlayWhenReady()} or
-     * {@link #getPlaybackState()} changes.
-     *
-     * @param playWhenReady Whether playback will proceed when ready.
-     * @param playbackState One of the {@code STATE} constants.
-     */
-    @SuppressWarnings("JavadocReference")
-    @Override
-    public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-        if (playbackState == Player.STATE_READY) {
-            mIsPlaying = playWhenReady;
-        }
-    }
-
-    @Override
-    public void onRepeatModeChanged(int repeatMode) {
-    }
-
-    @Override
-    public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled) {
-    }
-
-    @Override
-    public void onTimelineChanged(Timeline timeline, Object manifest, int reason) {
-    }
-
-    @Override
-    public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
-    }
-
-    @Override
-    public void onLoadingChanged(boolean isLoading) {
-    }
-
-    @Override
-    public void onPlayerError(ExoPlaybackException error) {
-    }
-
-    @Override
-    public void onPositionDiscontinuity(int reason) {
-    }
-
-    @Override
-    public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
-    }
-
-    @Override
-    public void onSeekProcessed() {
     }
 }

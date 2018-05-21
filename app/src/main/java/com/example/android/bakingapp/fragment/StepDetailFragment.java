@@ -338,6 +338,7 @@ public class StepDetailFragment extends Fragment implements Player.EventListener
         state.title = this.mTitle;
         if (mExoPlayer != null) {
             mPlayerPosition = mExoPlayer.getCurrentPosition();
+            mIsPlaying = mExoPlayer.getPlayWhenReady();
             state.playerPosition = mPlayerPosition;
             state.isPlaying = mIsPlaying;
         }
